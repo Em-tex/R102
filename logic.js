@@ -1,5 +1,5 @@
 // --- KONFIGURASJON & DATA ---
-const STORAGE_KEY = 'r102_autosave_v10';
+const STORAGE_KEY = 'r102_autosave_v11';
 const GEBYR_FORSKRIFT = "Forskrift av 28. januar 2026 nr. 125 om gebyr til Luftfartstilsynet mv.";
 const GEBYR_SATS_NY = "3180";
 const GEBYR_SATS_FORLENGELSE = "1610";
@@ -42,9 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
     attachAutosave();
 });
 
-// --- PASTE HANDLER FOR IMAGE ---
+// --- PASTE IMAGE ---
 document.addEventListener('paste', function(e) {
-    // Sjekk om det er bilder i utklippstavlen
     const items = (e.clipboardData || e.originalEvent.clipboardData).items;
     for (let index in items) {
         const item = items[index];
@@ -55,11 +54,10 @@ document.addEventListener('paste', function(e) {
                 mapImageBase64 = event.target.result;
                 document.getElementById('img_preview').src = mapImageBase64;
                 document.getElementById('image_preview_container').style.display = 'block';
-                // Oppdater også det skjulte filfeltet (visuelt triks, men vi lagrer base64)
                 saveState();
             };
             reader.readAsDataURL(blob);
-            e.preventDefault(); // Hindre at det limes inn tekst-junk hvis det også finnes
+            e.preventDefault(); 
         }
     }
 });
@@ -68,52 +66,37 @@ document.addEventListener('paste', function(e) {
 function toggleAuthRef() {
     const spec = document.getElementById('reg_spesifikk').checked;
     const stats = document.getElementById('reg_stats').checked;
-    
     const refInput = document.getElementById('in_spesifikk_ref');
-    if (spec || stats) {
-        refInput.style.display = 'block';
-    } else {
-        refInput.style.display = 'none';
-    }
+    refInput.style.display = (spec || stats) ? 'block' : 'none';
 }
 
 function setStortingetDate() {
     const fraInput = document.getElementById('in_fra');
     const year = fraInput.value ? new Date(fraInput.value).getFullYear() : new Date().getFullYear();
-    
     let d = new Date(year, 9, 1); 
     let workdayCount = 0;
     while (workdayCount < 2) {
         if (d.getDay() !== 0) workdayCount++;
         if (workdayCount < 2) d.setDate(d.getDate() + 1);
     }
-
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
-    const dateStr = `${year}-${month}-${day}`;
-
     const field = document.getElementById('in_stortinget_dato');
-    if (!field.value) field.value = dateStr;
+    if (!field.value) field.value = `${year}-${month}-${day}`;
 }
 
 function checkDates() {
     const fra = document.getElementById('in_fra').valueAsDate;
     const til = document.getElementById('in_til').valueAsDate;
-    
-    if (!fra || !til) {
-        document.getElementById('div_stortinget_varsel').style.display = 'none';
-        return;
-    }
+    if (!fra || !til) { document.getElementById('div_stortinget_varsel').style.display = 'none'; return; }
 
     STANDARD_NOFLY.forEach(std => {
         let hit = false;
         let startYear = fra.getFullYear();
         let endYear = til.getFullYear();
-
         for (let y = startYear; y <= endYear; y++) {
             if (std.date === "12-31") { 
-                 let d1 = new Date(y, 11, 31);
-                 let d2 = new Date(y+1, 0, 1);
+                 let d1 = new Date(y, 11, 31); let d2 = new Date(y+1, 0, 1);
                  if ((d1 >= fra && d1 <= til) || (d2 >= fra && d2 <= til)) hit = true;
             } else {
                 let [m, d] = std.date.split('-');
@@ -121,19 +104,13 @@ function checkDates() {
                 if (testDate >= fra && testDate <= til) hit = true;
             }
         }
-
-        if (hit && !activeNoFlyDates.some(x => x.label === std.label)) {
-            activeNoFlyDates.push({ label: std.label, auto: true });
-        }
+        if (hit && !activeNoFlyDates.some(x => x.label === std.label)) activeNoFlyDates.push({ label: std.label, auto: true });
     });
 
     const stortingInput = document.getElementById('in_stortinget_dato');
-    const stortingDiv = document.getElementById('div_stortinget_varsel');
-    
     let showStortinget = false;
     let startYear = fra.getFullYear();
     let endYear = til.getFullYear();
-    
     for (let y = startYear; y <= endYear; y++) {
         let octStart = new Date(y, 9, 1);
         let octEnd = new Date(y, 9, 14); 
@@ -141,7 +118,7 @@ function checkDates() {
     }
 
     if (showStortinget) {
-        stortingDiv.style.display = 'flex';
+        document.getElementById('div_stortinget_varsel').style.display = 'flex';
         if (stortingInput.value) {
             const stortingDate = new Date(stortingInput.value);
             if (stortingDate >= fra && stortingDate <= til) {
@@ -152,37 +129,20 @@ function checkDates() {
             }
         }
     } else {
-        stortingDiv.style.display = 'none';
+        document.getElementById('div_stortinget_varsel').style.display = 'none';
     }
-
     renderNoFlyList();
     saveState();
 }
 
 function addCustomNoFly() {
     const txt = document.getElementById('new_nofly_text').value;
-    if (txt) {
-        activeNoFlyDates.push({ label: txt, auto: false });
-        document.getElementById('new_nofly_text').value = '';
-        renderNoFlyList();
-        saveState();
-    }
+    if (txt) { activeNoFlyDates.push({ label: txt, auto: false }); document.getElementById('new_nofly_text').value = ''; renderNoFlyList(); saveState(); }
 }
-
-function removeNoFly(index) {
-    activeNoFlyDates.splice(index, 1);
-    renderNoFlyList();
-    saveState();
-}
-
+function removeNoFly(index) { activeNoFlyDates.splice(index, 1); renderNoFlyList(); saveState(); }
 function renderNoFlyList() {
-    const ul = document.getElementById('no_fly_list');
-    ul.innerHTML = '';
-    activeNoFlyDates.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `${item.label} <span class="tag-remove" onclick="removeNoFly(${index})">&times;</span>`;
-        ul.appendChild(li);
-    });
+    const ul = document.getElementById('no_fly_list'); ul.innerHTML = '';
+    activeNoFlyDates.forEach((item, index) => { const li = document.createElement('li'); li.innerHTML = `${item.label} <span class="tag-remove" onclick="removeNoFly(${index})">&times;</span>`; ul.appendChild(li); });
 }
 
 function togglePrivat(save = true) {
@@ -242,12 +202,8 @@ function byttSpraak(resetTexts = true) {
     saveState();
 }
 
-function addPilot(navn = '') {
-    const id = Date.now(); pilots.push({ id, navn }); renderPilots(); saveState();
-}
-function removePilot(id) {
-    pilots = pilots.filter(p => p.id !== id); renderPilots(); saveState();
-}
+function addPilot(navn = '') { const id = Date.now(); pilots.push({ id, navn }); renderPilots(); saveState(); }
+function removePilot(id) { pilots = pilots.filter(p => p.id !== id); renderPilots(); saveState(); }
 function renderPilots() {
     const container = document.getElementById('pilot_container'); container.innerHTML = '';
     pilots.forEach((p, index) => {
@@ -258,9 +214,7 @@ function renderPilots() {
 }
 function updatePilot(id, field, value) { const p = pilots.find(x => x.id === id); if (p) { p[field] = value; saveState(); } }
 
-function addDrone(modell = '', vekt = '', unit = 'kg', sn = '') {
-    const id = Date.now() + Math.random(); drones.push({ id, modell, vekt, unit, sn }); renderDrones(); saveState();
-}
+function addDrone(modell = '', vekt = '', unit = 'kg', sn = '') { const id = Date.now() + Math.random(); drones.push({ id, modell, vekt, unit, sn }); renderDrones(); saveState(); }
 function removeDrone(id) { drones = drones.filter(d => d.id !== id); renderDrones(); saveState(); }
 function renderDrones() {
     const container = document.getElementById('drone_container'); container.innerHTML = '';
@@ -410,7 +364,16 @@ function printDoc() {
     document.getElementById('out_txt_vurdering').innerHTML = vurdering.replace(/\n/g, "<br>");
     document.getElementById('out_txt_vedtak').innerText = vedtak;
     document.getElementById('out_txt_gebyr').innerHTML = gebyrTxt.replace(/\n/g, "<br>");
-    document.getElementById('out_txt_klage').innerText = t.klage;
+    
+    // Klageadgang tekst split
+    const klageFull = t.klage;
+    // Vi deler opp teksten slik at lenken blir klikkbar
+    const splitPoint = klageFull.indexOf("https");
+    let klagePart1 = klageFull;
+    if(splitPoint > -1) {
+        klagePart1 = klageFull.substring(0, splitPoint);
+    }
+    document.getElementById('out_txt_klage').querySelector('#klage_tekst').innerText = klagePart1;
     document.getElementById('out_txt_kopi').innerText = t.kopi;
 
     const ul = document.getElementById('list_vilkar'); ul.innerHTML = "";

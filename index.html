@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <title>Saksbehandling R102</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="workspace no-print">
+        <header>
+            <h1>Saksbehandling R102</h1>
+            <p>Fyll ut feltene og klikk på knappen nederst for å generere vedtak.</p>
+        </header>
+
+        <div class="input-card">
+            <h2>1. Saksdetaljer</h2>
+            <div class="grid">
+                <div><label>Mottaker Navn/Firma</label><input type="text" id="in_mottaker" placeholder="Navn på søker"></div>
+                <div><label>Adresse</label><input type="text" id="in_adresse" placeholder="Gateadresse"></div>
+                <div><label>Poststed</label><input type="text" id="in_poststed" placeholder="Postnr og Sted"></div>
+            </div>
+            <div class="grid">
+                <div><label>Saksbehandler</label><input type="text" id="in_saksbehandler" value="Martin Rugsveen"></div>
+                <div><label>Vår Ref (P360)</label><input type="text" id="in_ref" placeholder="25/00566-..."></div>
+                <div><label>Vår Dato</label><input type="date" id="in_dato"></div>
+            </div>
+            <div class="grid">
+                <div><label>Deres Dato</label><input type="date" id="in_deresDato"></div>
+                <div><label>Operatørnummer</label><input type="text" id="in_opNr" placeholder="NOR..."></div>
+            </div>
+        </div>
+
+        <div class="input-card">
+            <h2>2. Operasjon</h2>
+            <div class="grid">
+                <div>
+                    <label>Regelsett</label>
+                    <select id="in_regelsett">
+                        <option value="Åpen kategori, underkategori A1">Åpen kategori, A1</option>
+                        <option value="Åpen kategori, underkategori A2">Åpen kategori, A2</option>
+                        <option value="Spesifikk kategori">Spesifikk kategori</option>
+                    </select>
+                </div>
+                <div><label>Oppdragsgiver</label><input type="text" id="in_oppdrag"></div>
+                <div><label>Art (Formål)</label><input type="text" id="in_art"></div>
+            </div>
+            <div class="grid">
+                <div><label>Fra dato</label><input type="date" id="in_fra"></div>
+                <div><label>Til dato</label><input type="date" id="in_til"></div>
+            </div>
+            <div class="full-width">
+                <label>Område</label>
+                <textarea id="in_omrade" rows="2"></textarea>
+            </div>
+            <div class="full-width">
+                <label>Kontaktinfo / Piloter</label>
+                <textarea id="in_kontakt" rows="3" placeholder="Navn, tlf, epost"></textarea>
+            </div>
+        </div>
+
+        <div class="input-card">
+            <h2>3. Drone</h2>
+            <div class="grid">
+                <div><label>Modell</label><input type="text" id="in_modell"></div>
+                <div><label>Vekt</label><input type="text" id="in_vekt"></div>
+                <div><label>Serienummer</label><input type="text" id="in_sn"></div>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button onclick="resetForm()" class="btn-danger" style="margin-right: 10px;">🗑️ Tøm skjema</button>
+            <button onclick="printDoc()">🖨️ Generer PDF / Skriv ut</button>
+        </div>
+    </div>
+
+    <div class="paper-doc">
+        
+        <div class="doc-header">
+            <img src="logo.png" alt="Luftfartstilsynet Logo" class="logo-img">
+            
+            <div class="doc-meta">
+                <table>
+                    <tr><td class="bold">Saksbehandler:</td><td id="out_saksbehandler"></td></tr>
+                    <tr><td class="bold">Telefon direkte:</td><td></td></tr>
+                    <tr><td class="bold">Vår dato:</td><td id="out_dato"></td></tr>
+                    <tr><td class="bold">Vår referanse:</td><td id="out_ref"></td></tr>
+                    <tr><td colspan="2" style="height:5px"></td></tr> <tr><td class="bold">Deres dato:</td><td id="out_deresDato"></td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="address-block uppercase">
+            <div id="out_mottaker"></div>
+            <div id="out_adresse"></div>
+            <div id="out_poststed"></div>
+        </div>
+
+        <h1 class="doc-title">
+            <span id="out_tittelMottaker" class="uppercase"></span> – R102 – Dispensasjon
+        </h1>
+
+        <div class="content-block">
+            <h3>Bakgrunn</h3>
+            <p id="txt_bakgrunn"></p> <table class="data-table">
+                <tr><th>Regelsett</th><td id="out_regelsett"></td></tr>
+                <tr><th>Kontaktinformasjon</th><td id="out_kontakt" style="white-space: pre-line;"></td></tr>
+                <tr><th>Oppdragsgiver</th><td id="out_oppdrag"></td></tr>
+                <tr><th>Oppdragets art</th><td id="out_art"></td></tr>
+                <tr><th>Tidsrom</th><td>Fra <span id="out_fra"></span> &nbsp; Til <span id="out_til"></span></td></tr>
+                <tr><th>Operasjonsområde</th><td id="out_omrade"></td></tr>
+                <tr><th>Piloter</th><td>Se kontaktinformasjon</td></tr>
+            </table>
+
+            <h3>Regelverk</h3>
+            <p id="txt_regelverk"></p>
+
+            <h3>Vurdering</h3>
+            <p id="txt_vurdering_part1"></p>
+            <p id="txt_vurdering_part2"></p>
+            <p id="txt_vurdering_part3"></p>
+
+            <h3>Vedtak</h3>
+            <p id="txt_vedtak"></p>
+        </div>
+
+        <div class="page-break-wrapper">
+            <h3>Vilkår</h3>
+            <ul id="list_vilkar">
+                </ul>
+
+            <h3>Droner</h3>
+            <table class="data-table">
+                <tr><th>Modell</th><th>Vekt</th><th>Serienummer</th></tr>
+                <tr><td id="out_modell"></td><td id="out_vekt"></td><td id="out_sn"></td></tr>
+            </table>
+
+            <div class="info-block">
+                <h3>Til informasjon</h3>
+                <p id="txt_gebyr"></p>
+            </div>
+
+            <div class="small-text">
+                <h3>Klageadgang</h3>
+                <p id="txt_klage"></p>
+                <p><strong>Kopi:</strong> <span id="txt_kopi"></span></p>
+            </div>
+        </div>
+
+        <div class="signature-block">
+            <div class="sign-col">
+                Med vennlig hilsen<br><br>
+                Andreas Johansen<br>
+                seksjonssjef<br>
+                ubemannet luftfart
+                <div class="electronic-msg">Dokumentet er elektronisk godkjent</div>
+            </div>
+            <div class="sign-col">
+                <br><br>
+                <span id="out_saksbehandler_sign"></span><br>
+                flyoperativ inspektør<br>
+                ubemannet luftfart
+            </div>
+        </div>
+
+        <footer class="doc-footer">
+            <div class="left">
+                <strong>Luftfartstilsynet</strong><br>
+                Sjøgata 45-47, 8006 Bodø<br>
+                Postboks 243, N-8001 Bodø
+            </div>
+            <div class="right">
+                +47 755 85 000<br>
+                postmottak@caa.no<br>
+                luftfartstilsynet.no
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="tekster.js"></script>
+    <script src="logic.js"></script>
+</body>
+</html>

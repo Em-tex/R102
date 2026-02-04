@@ -1,5 +1,5 @@
 // --- KONFIGURASJON & DATA ---
-const STORAGE_KEY = 'r102_autosave_v9';
+const STORAGE_KEY = 'r102_autosave_v10';
 const GEBYR_FORSKRIFT = "Forskrift av 28. januar 2026 nr. 125 om gebyr til Luftfartstilsynet mv.";
 const GEBYR_SATS_NY = "3180";
 const GEBYR_SATS_FORLENGELSE = "1610";
@@ -42,7 +42,29 @@ document.addEventListener('DOMContentLoaded', () => {
     attachAutosave();
 });
 
-// --- VIS/SKJUL AUTORISASJONSNUMMER ---
+// --- PASTE HANDLER FOR IMAGE ---
+document.addEventListener('paste', function(e) {
+    // Sjekk om det er bilder i utklippstavlen
+    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+    for (let index in items) {
+        const item = items[index];
+        if (item.kind === 'file' && item.type.includes('image/')) {
+            const blob = item.getAsFile();
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                mapImageBase64 = event.target.result;
+                document.getElementById('img_preview').src = mapImageBase64;
+                document.getElementById('image_preview_container').style.display = 'block';
+                // Oppdater også det skjulte filfeltet (visuelt triks, men vi lagrer base64)
+                saveState();
+            };
+            reader.readAsDataURL(blob);
+            e.preventDefault(); // Hindre at det limes inn tekst-junk hvis det også finnes
+        }
+    }
+});
+
+// --- RESTEN AV LOGIKKEN (Samme som før) ---
 function toggleAuthRef() {
     const spec = document.getElementById('reg_spesifikk').checked;
     const stats = document.getElementById('reg_stats').checked;
@@ -55,23 +77,15 @@ function toggleAuthRef() {
     }
 }
 
-// --- DATO-LOGIKK FOR STORTINGET ---
 function setStortingetDate() {
     const fraInput = document.getElementById('in_fra');
     const year = fraInput.value ? new Date(fraInput.value).getFullYear() : new Date().getFullYear();
     
-    // Høytidelig åpning er 2. hverdag (ikke søndag) i oktober.
-    let d = new Date(year, 9, 1); // 1. oktober
+    let d = new Date(year, 9, 1); 
     let workdayCount = 0;
-    
-    // Loop fremover og finn den 2. dagen som ikke er søndag
     while (workdayCount < 2) {
-        if (d.getDay() !== 0) { // 0 = Søndag
-            workdayCount++;
-        }
-        if (workdayCount < 2) {
-            d.setDate(d.getDate() + 1);
-        }
+        if (d.getDay() !== 0) workdayCount++;
+        if (workdayCount < 2) d.setDate(d.getDate() + 1);
     }
 
     const day = String(d.getDate()).padStart(2, '0');
@@ -79,12 +93,9 @@ function setStortingetDate() {
     const dateStr = `${year}-${month}-${day}`;
 
     const field = document.getElementById('in_stortinget_dato');
-    if (!field.value) {
-        field.value = dateStr;
-    }
+    if (!field.value) field.value = dateStr;
 }
 
-// --- SJEKK DATOER MOT PERIODE ---
 function checkDates() {
     const fra = document.getElementById('in_fra').valueAsDate;
     const til = document.getElementById('in_til').valueAsDate;
@@ -94,7 +105,6 @@ function checkDates() {
         return;
     }
 
-    // 1. Sjekk faste datoer
     STANDARD_NOFLY.forEach(std => {
         let hit = false;
         let startYear = fra.getFullYear();
@@ -117,37 +127,28 @@ function checkDates() {
         }
     });
 
-    // 2. Sjekk om Stortingets åpning er relevant
     const stortingInput = document.getElementById('in_stortinget_dato');
     const stortingDiv = document.getElementById('div_stortinget_varsel');
     
-    // Vi viser varselet hvis perioden overlapper med de to første ukene av oktober
     let showStortinget = false;
     let startYear = fra.getFullYear();
     let endYear = til.getFullYear();
     
     for (let y = startYear; y <= endYear; y++) {
         let octStart = new Date(y, 9, 1);
-        let octEnd = new Date(y, 9, 14); // Sjekk første 14 dager
-        
-        if (fra <= octEnd && til >= octStart) {
-            showStortinget = true;
-        }
+        let octEnd = new Date(y, 9, 14); 
+        if (fra <= octEnd && til >= octStart) showStortinget = true;
     }
 
     if (showStortinget) {
         stortingDiv.style.display = 'flex';
-        // Og sjekk om den spesifikke datoen er valgt (om brukeren ikke har endret den)
         if (stortingInput.value) {
             const stortingDate = new Date(stortingInput.value);
             if (stortingDate >= fra && stortingDate <= til) {
                 const day = String(stortingDate.getDate()).padStart(2, '0');
                 const month = String(stortingDate.getMonth() + 1).padStart(2, '0');
                 const label = `${day}.${month} (Stortingets åpning)`;
-
-                if (!activeNoFlyDates.some(x => x.label === label)) {
-                    activeNoFlyDates.push({ label: label, auto: true });
-                }
+                if (!activeNoFlyDates.some(x => x.label === label)) activeNoFlyDates.push({ label: label, auto: true });
             }
         }
     } else {
@@ -184,7 +185,6 @@ function renderNoFlyList() {
     });
 }
 
-// --- RESTEN AV LOGIKKEN ---
 function togglePrivat(save = true) {
     const isPrivat = document.getElementById('check_privat').checked;
     const orgDiv = document.getElementById('div_orgNr');

@@ -198,15 +198,18 @@
                 <label>Operasjonsområde</label>
                 <div class="icon-input">
                     <i class="fa-solid fa-map"></i>
-                    <textarea id="in_omrade" class="required" rows="2" placeholder="Adresse/sted/kartutsnitt"></textarea>
+                    <textarea id="in_omrade" class="required" rows="2" placeholder="Beskrivelse av området (tekst)"></textarea>
                 </div>
-                <div style="margin-top: 5px;">
-                    <label style="font-weight: normal; font-size: 0.9em;">Last opp kartutsnitt (Bilde):</label>
-                    <input type="file" id="in_kart_bilde" accept="image/*" onchange="previewImage()">
+                
+                <div class="paste-area" onclick="document.getElementById('in_kart_bilde').click()">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <p><strong>Klikk for å laste opp</strong> eller lim inn bilde her med <strong>Ctrl+V</strong></p>
+                    <input type="file" id="in_kart_bilde" accept="image/*" onchange="previewImage()" style="display:none;">
                 </div>
-                <div id="image_preview_container" style="margin-top: 10px; display:none;">
-                    <img id="img_preview" style="max-height: 100px; border: 1px solid #ccc;">
-                    <button class="btn-remove" onclick="removeImage()" style="display:inline-flex; vertical-align:top;">X</button>
+
+                <div id="image_preview_container" style="margin-top: 10px; display:none; position:relative; background:#f9f9f9; padding:5px; border-radius:5px; border:1px solid #eee;">
+                    <img id="img_preview" style="max-height: 200px; display:block; margin:0 auto;">
+                    <button class="btn-remove" onclick="removeImage()" style="position:absolute; top:-10px; right:-10px; background:#d32f2f; color:white; border:none;" title="Fjern bilde"><i class="fa-solid fa-times"></i></button>
                 </div>
             </div>
 
@@ -292,10 +295,7 @@
                 <p id="out_txt_bakgrunn"></p> 
                 
                 <table class="data-table">
-                    <tr>
-                        <th id="th_regelsett">Regelsett</th>
-                        <td id="out_regelsett"></td>
-                    </tr>
+                    <tr><th id="th_regelsett">Regelsett</th><td id="out_regelsett"></td></tr>
                     
                     <tr>
                         <th id="th_kontakt" colspan="2" style="background-color: #f0f0f0; font-weight: bold;">Kontaktinformasjon</th>

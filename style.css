@@ -48,7 +48,6 @@ header {
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 15px; }
 .full-width { width: 100%; margin-bottom: 15px; }
 
-/* Input Styling */
 input, select, textarea {
     width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;
     font-family: 'Aptos', 'Segoe UI', sans-serif; 
@@ -63,7 +62,6 @@ input:focus, textarea:focus, select:focus {
 
 label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 6px; color: #444; }
 
-/* Ikon i input */
 .icon-input { position: relative; }
 .icon-input i {
     position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #999;
@@ -72,7 +70,6 @@ label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 6px; c
 .icon-input textarea { padding-top: 10px; }
 .icon-input i.fa-map { top: 20px; } 
 
-/* STORE KNAPPER FOR SØKNADSTYPE */
 .toggle-group { display: flex; gap: 15px; width: 100%; }
 .toggle-option { flex: 1; position: relative; height: 50px; }
 .toggle-option input[type="radio"] { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
@@ -90,12 +87,10 @@ label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 6px; c
 }
 .toggle-option i { margin-right: 8px; font-size: 1.1em; }
 
-/* CHECKBOX GROUP */
 .inline-checkboxes { display: flex; flex-direction: row; align-items: center; gap: 20px; margin-top: 5px; flex-wrap: wrap; }
 .checkbox-group label { font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 0; }
 .checkbox-group input[type="checkbox"] { margin: 0; width: auto; height: 16px; cursor: pointer; }
 
-/* PASTE AREA */
 .paste-area {
     border: 2px dashed #ccc; padding: 20px; text-align: center; border-radius: 6px;
     background: #f9f9f9; cursor: pointer; transition: all 0.2s; margin-top: 5px; color: #666;
@@ -104,7 +99,6 @@ label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 6px; c
 .paste-area p { margin: 0; pointer-events: none; }
 .paste-area i { font-size: 1.5em; margin-bottom: 5px; display: block; }
 
-/* Tags og lister */
 .tag-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
 .tag-list li { background: #e3f2fd; color: #0d47a1; padding: 5px 10px; border-radius: 15px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
 .tag-remove { cursor: pointer; color: #c62828; font-weight: bold; }
@@ -134,20 +128,18 @@ button:hover { background: #004494; }
    ------------------------------------------- */
 @media print {
     
-    /* STANDARD SIDER (Side 2, 3...) */
     @page { 
         size: A4;
-        /* Margene her styrer det "hvite området" rundt innholdet. */
-        margin-top: 25mm; /* Luft i toppen på side 2+ */
+        margin-top: 25mm;
         margin-left: 20mm;
         margin-right: 20mm;
-        /* VIKTIG: Stor bunnmarg (35mm) tvinger innholdet til å stoppe før det treffer adressen i bunnen */
-        margin-bottom: 35mm; 
+        /* Økt margin for å unngå kollisjon med footer på side 2+ */
+        margin-bottom: 45mm; 
     }
 
-    /* SIDE 1: Skal ha 0 marg for at det blå feltet skal nå kanten */
     @page:first {
-        margin: 0;
+        /* Fjerner alle marger på side 1 for å la footeren gå helt ut til kanten */
+        margin: 0 !important;
     }
     
     body { background: white; margin: 0; padding: 0; }
@@ -162,12 +154,11 @@ button:hover { background: #004494; }
         font-family: 'Aptos', sans-serif;
     }
 
-    /* SIDE 1 WRAPPER (Full bleed container) */
     .page-1-wrapper {
         position: relative;
-        height: 297mm; /* Full A4 */
+        height: 297mm;
         width: 100%;
-        /* Vi simulerer margene med padding her inne i stedet siden @page er 0 */
+        /* Simulerer margene internt siden @page er 0 */
         padding: 20mm 20mm 0 20mm; 
         box-sizing: border-box;
         page-break-after: always;
@@ -190,7 +181,6 @@ button:hover { background: #004494; }
 
     .doc-title { font-size: 16pt; margin-bottom: 20px; margin-top: 0; }
     
-    /* Tekstbrytning: Hold sammen overskrifter og avsnitt */
     h3 { font-size: 11pt; margin-bottom: 5px; margin-top: 15px; page-break-after: avoid; }
     p { margin-top: 0; margin-bottom: 10px; text-align: justify; orphans: 2; widows: 2;}
 
@@ -205,29 +195,23 @@ button:hover { background: #004494; }
         bottom: 0;
         left: 0;
         right: 0;
-        width: 100%;
+        width: 100%; /* Sørger for at den strekker seg fra kant til kant */
         height: 35mm;
-        background-color: #e6f7ff !important; /* Tving farge */
+        background-color: #e6f7ff !important;
         display: flex;
         justify-content: space-between;
-        padding: 15px 20mm; /* Padding matcher side-margene */
+        padding: 15px 20mm;
         box-sizing: border-box;
         font-size: 9pt;
         color: #333;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
-        
-        /* MAGI FOR Å DEKKE HVIT BOKS */
+        /* Legger denne øverst for å dekke over den faste footeren på side 1 */
         z-index: 9999; 
-        transform: translateZ(0); /* Nytt lag */
     }
     .p1-footer-right { text-align: right; }
 
-    ul { margin-top: 0; padding-left: 20px; }
-    li { margin-bottom: 4px; }
-
     /* SIDE 2+ WRAPPER */
-    /* Marger styres nå av @page, så vi fjerner padding her for å unngå dobbel margin */
     .page-break-wrapper {
         width: 100%;
         margin: 0;
@@ -246,23 +230,21 @@ button:hover { background: #004494; }
         left: 0; 
         right: 0; 
         height: 15mm; 
-        margin: 0 20mm; /* Matcher venstre/høyre marg i @page */
+        margin: 0 20mm;
         border-top: 1px solid #ccc;
         padding-top: 5px;
         display: flex;
         justify-content: space-between;
         font-size: 8pt;
         color: #666;
-        background: white;
+        background: white; /* Hvit bakgrunn hindrer gjennomskinn av tekst bak */
         z-index: 10;
-        /* Denne kan bli dekket av page-1-footer pga z-index forskjellen */
     }
     .right { text-align: right; }
     
-    /* KLAGEADGANG FARGE - HELSVART */
     .small-text, .small-text p, .small-text h3 { 
         font-size: 9pt; 
-        color: #000000 !important; /* TVING SVART */
+        color: #000000 !important;
     } 
     .small-text a { 
         color: #0056b3 !important; 

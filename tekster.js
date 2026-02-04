@@ -1,6 +1,5 @@
 const teksterData = {
     no: {
-        // "Vi viser til søknad om..."
         bakgrunn: "Vi viser til søknad om {TYPE} av tillatelse til flyging med drone i EN R102 – {MOTTAKER}, organisasjonsnummer: {ORGNR}, operatørnummer: {OPNR}",
         
         regelverk: "Forskrift av 16. oktober 2007 nr. 1152 om opprettelse av et permanent restriksjonsområde over sentrum av Oslo (EN R102 Oslo).",
@@ -9,7 +8,6 @@ const teksterData = {
         
         vedtak: "Med hjemmel i forskrift av 16. oktober 2007 nr. 1152 om opprettelse av et permanent restriksjonsområde over sentrum av Oslo § 3 tredje ledd, dispensasjon fra flyforbudet i restriksjonsområde EN R102 Oslo, innvilges {MOTTAKER} tillatelse til å operere luftfartøy uten fører om bord i tråd med OM med vedlegg, og vilkårene gitt nedenfor.",
         
-        // Matcher PDF-strukturen nøyaktig
         gebyr: "Gebyr på kr. {BELOP} faktureres for søknad om {TYPE} av tillatelse til flyging i restriksjonsområde. Jamfør {FORSKRIFT} § 31.\nFaktura vil bli ettersendt.\n\nI forbindelse med fremtidig korrespondanse ber vi om at det benyttes referanse til saksnummer som angitt øverst til høyre på dette dokumentet.",
         
         klage: "Dere kan klage på dette vedtaket til Samferdselsdepartementet. En klage må sendes til Luftfartstilsynet innen 3 uker fra dere mottok vedtaket. Dere kan lese mer om klageadgangen her: https://luftfartstilsynet.no/om-oss/saksbehandling/. Dere kan også ta kontakt med Luftfartstilsynet for å få mer informasjon om klageadgangen.",
@@ -22,13 +20,14 @@ const teksterData = {
             hilsen: "Med vennlig hilsen", avdeling: "ubemannet luftfart", stilling: "flyoperativ inspektør",
             elektronisk: "Dokumentet er elektronisk godkjent og krever ikke signatur",
             dok_tittel: "Dispensasjon",
-            tabell: { regelsett: "Regelsett", kontakt: "Kontaktinfo", oppdrag: "Oppdragsgiver", art: "Oppdragets art", tid: "Tidsrom", sted: "Område", piloter: "Piloter" },
+            // Oppdatert tabell-labels for å matche nytt format
+            tabell: { regelsett: "Regelsett", kontakt: "Kontaktinformasjon", oppdrag: "Oppdragsgiver", art: "Oppdragets art", tid: "Tidsrom", sted: "Operasjonsområde", piloter: "Piloter" },
             header: { bakgrunn: "Bakgrunn", regelverk: "Regelverk", vurdering: "Vurdering", vedtak: "Vedtak", vilkar: "Vilkår", droner: "Droner", info: "Til informasjon", klage: "Klageadgang" }
         },
         vilkar: [
-            "Flygning er kun tillatt i tidsrommet {FRA} – {TIL}, unntatt disse dagene da flyging ikke er tillatt:\n - 31.12-01.01 (nyttårsaften og første nyttårsdag)\n - 17.05 (nasjonaldagen)\n - [Dato] (Stortingets åpningsdag)\n - 10.12 (utdeling av Nobels fredspris)",
+            "Flygning er kun tillatt i tidsrommet {FRA} – {TIL}, unntatt disse dagene da flyging ikke er tillatt:\n{FORBUDSDAGER}",
             "Flyging skal skje i henhold til reglene i {REGELSETT}, jf. forskrift om luftfart med ubemannede luftfartøyer.",
-            "Flygning er kun tillatt med dronene det er søkt om å bruke. Disse er spesifisert i listen ovenfor under avsnittet «Bakgrunn».",
+            "Flyging er kun tillatt med dronene det er søkt om å bruke. Disse er spesifisert i listen ovenfor under avsnittet «Bakgrunn».",
             "Flyging i forbudsområder for bruk av luftbårne sensorer krever egen tillatelse fra Nasjonal Sikkerhetsmyndighet (NSM).",
             "Supervisor Norway ACC Oslo skal, før flyging, varsles på epost til osopsup@avinor.no.",
             "Et eventuelt pålegg fra Politiet om å stanse flygning skal etterkommes så snart som operasjonelt mulig.",
@@ -38,7 +37,6 @@ const teksterData = {
         ]
     },
     en: {
-        // "Reference is made to..."
         bakgrunn: "Reference is made to the application for {TYPE} of permission to fly with drones in EN R102 – {MOTTAKER}, trade register No: {ORGNR}, operator number: {OPNR}",
         
         regelverk: "Regulation of October 16, 2007, No. 1152 concerning the establishment of a permanent restricted area over the center of Oslo (EN R102 Oslo).",
@@ -51,7 +49,7 @@ const teksterData = {
         
         klage: "This decision may be appealed to the Ministry of Transport. In such case, an appeal must be sent to the Civil Aviation Authority within 3 weeks from receipt of the decision. More information on your right to appeal is provided here: https://www.luftfartstilsynet.no/en/about-us/case-processing/. You may also contact the Civil Aviation Authority for further information.",
         
-        kopi: "Oslo Police District - Joint Operations Center - Section Plan and Preparedness (oslo.arrangement@politiet.no), Avinor Flysikring AS Supervisor Sector Group East (osopsup@avinor.no), Norwegian Armed Forces Common Services (fft.vs.ops@mil.no, jrorvik@mil.no), Norwegian Armed Forces His Majesty the Kings Guard (haren.hmkg.ops@mil.no), Norwegian Government Security and Service Organization (vaktsentralen@dss.dep.no), Norwegian National Security Authority (luft@nsm.no), CAA Fees (gebyr@caa.no).",
+        kopi: "Oslo Police District, Avinor, Norwegian Armed Forces, NSM, CAA Fees.",
         
         labels: {
             saksbehandler: "Case Officer:", tlf: "Direct line:", dato: "Our Date:", 
@@ -59,11 +57,11 @@ const teksterData = {
             hilsen: "Yours sincerely", avdeling: "Unmanned Aviation", stilling: "Flight Operations Inspector",
             elektronisk: "This document has been electronically approved and does not require a signature",
             dok_tittel: "Dispensation",
-            tabell: { regelsett: "Regulations", kontakt: "Contact info", oppdrag: "Client", art: "Operation type", tid: "Timeframe", sted: "Area", piloter: "Pilots" },
+            tabell: { regelsett: "Regulations", kontakt: "Contact information", oppdrag: "Client", art: "Operation type", tid: "Timeframe", sted: "Area of operation", piloter: "Pilots" },
             header: { bakgrunn: "Background", regelverk: "Regulations", vurdering: "Assessment", vedtak: "Decision", vilkar: "Conditions", droner: "Drones", info: "Information", klage: "Right of Appeal" }
         },
         vilkar: [
-            "Flight may only be carried out between {FRA} and {TIL}, except these dates when flying is prohibited:\n - 31.12-01.01 (new years)\n - 17.05 (constitution day)\n - [Date] (opening of the Norwegian Parliament, Stortinget)\n - 10.12 (Nobel Peace Prize Award Ceremony)",
+            "Flight may only be carried out between {FRA} and {TIL}, except these dates when flying is prohibited:\n{FORBUDSDAGER}",
             "Flights must be carried out according to {REGELSETT}.",
             "Operations are only permitted using the drones specified in the application. These are listed in the above table, under \"Background\".",
             "Flights within areas where the use of airborne sensors is prohibited require a separate permission from the Norwegian National Security Authority (NSM).",

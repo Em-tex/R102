@@ -11,40 +11,35 @@ let pilots = [];
 document.addEventListener('DOMContentLoaded', () => {
     // Sjekk at tekster.js er lastet
     if (typeof teksterData === 'undefined') {
-        alert("Feil: tekster.js er ikke lastet. Vennligst sjekk filene.");
+        alert("Feil: tekster.js er ikke lastet.");
         return;
     }
 
     setStandardDates();
     loadState(); // Laster lagret data
     
-    // Hvis ingen piloter/droner lastet, legg til en tom rad
     if (pilots.length === 0) addPilot();
     if (drones.length === 0) addDrone();
 
-    oppdaterGebyr(); // Sett riktig startgebyr
+    oppdaterGebyr(); 
     attachAutosave();
 });
 
-// --- LISTE-LOGIKK ---
-
+// --- LISTE-LOGIKK (Samme som før) ---
 function addPilot(navn = '', tlf = '', epost = '') {
-    const id = Date.now(); // Unik ID
+    const id = Date.now(); 
     pilots.push({ id, navn, tlf, epost });
     renderPilots();
     saveState();
 }
-
 function removePilot(id) {
     pilots = pilots.filter(p => p.id !== id);
     renderPilots();
     saveState();
 }
-
 function renderPilots() {
     const container = document.getElementById('pilot_container');
     container.innerHTML = '';
-    
     pilots.forEach((p, index) => {
         const div = document.createElement('div');
         div.className = 'dynamic-row';
@@ -57,29 +52,24 @@ function renderPilots() {
         container.appendChild(div);
     });
 }
-
 function updatePilot(id, field, value) {
     const p = pilots.find(x => x.id === id);
     if (p) { p[field] = value; saveState(); }
 }
-
 function addDrone(modell = '', vekt = '', sn = '') {
     const id = Date.now() + Math.random(); 
     drones.push({ id, modell, vekt, sn });
     renderDrones();
     saveState();
 }
-
 function removeDrone(id) {
     drones = drones.filter(d => d.id !== id);
     renderDrones();
     saveState();
 }
-
 function renderDrones() {
     const container = document.getElementById('drone_container');
     container.innerHTML = '';
-    
     drones.forEach((d, index) => {
         const div = document.createElement('div');
         div.className = 'dynamic-row';
@@ -92,54 +82,49 @@ function renderDrones() {
         container.appendChild(div);
     });
 }
-
 function updateDrone(id, field, value) {
     const d = drones.find(x => x.id === id);
     if (d) { d[field] = value; saveState(); }
 }
 
-
-// --- GEBYR & SPRÅK LOGIKK ---
-
+// --- GEBYR & SPRÅK ---
 function oppdaterGebyr() {
     const isExtension = document.getElementById('type_forlengelse').checked;
     const gebyrInput = document.getElementById('in_gebyr_sats');
-    
-    // Oppdater kun hvis brukeren ikke har skrevet noe manuelt custom (valgfritt, her overskriver vi for sikkerhets skyld ved bytte)
     if (isExtension) {
         gebyrInput.value = GEBYR_SATS_FORLENGELSE;
     } else {
         gebyrInput.value = GEBYR_SATS_NY;
     }
-    
-    byttSpraak(false); // Oppdater tekster uten å reset
+    byttSpraak(false); 
     saveState();
 }
 
 function byttSpraak(resetTexts = true) {
     const lang = document.getElementById('in_spraak').value;
-    const t = teksterData[lang]; // Henter fra tekster.js
+    const t = teksterData[lang];
     const isExtension = document.getElementById('type_forlengelse').checked;
-    const typeTxt = lang === 'no' ? (isExtension ? "forlengelse" : "dispensasjon") : (isExtension ? "extension" : "dispensation");
+    
+    // Sett riktig ordlyd for type (dispensasjon/forlengelse)
+    let typeTxt = "";
+    if (lang === 'no') typeTxt = isExtension ? "forlengelse" : "dispensasjon";
+    else typeTxt = isExtension ? "extension" : "permission"; // PDF bruker "permission" og "extension of permission"
+
     const gebyrSats = document.getElementById('in_gebyr_sats').value;
 
-    // Fyll inn redigerbare felt med standardtekst
     if (resetTexts) {
         document.getElementById('txt_edit_bakgrunn').value = t.bakgrunn.replace('{TYPE}', typeTxt);
         document.getElementById('txt_edit_vurdering').value = t.vurdering;
         document.getElementById('txt_edit_vedtak').value = t.vedtak;
-        document.getElementById('txt_edit_gebyr').value = t.gebyr.replace('{BELOP}', gebyrSats).replace('{FORSKRIFT}', GEBYR_FORSKRIFT);
+        document.getElementById('txt_edit_gebyr').value = t.gebyr.replace('{BELOP}', gebyrSats).replace('{FORSKRIFT}', GEBYR_FORSKRIFT).replace('{TYPE}', typeTxt);
     } else {
         document.getElementById('txt_edit_bakgrunn').value = t.bakgrunn.replace('{TYPE}', typeTxt);
-        document.getElementById('txt_edit_gebyr').value = t.gebyr.replace('{BELOP}', gebyrSats).replace('{FORSKRIFT}', GEBYR_FORSKRIFT);
+        document.getElementById('txt_edit_gebyr').value = t.gebyr.replace('{BELOP}', gebyrSats).replace('{FORSKRIFT}', GEBYR_FORSKRIFT).replace('{TYPE}', typeTxt);
     }
-
     saveState();
 }
 
-
-// --- LAGRING OG HJELPEFUNKSJONER ---
-
+// --- LAGRING ---
 function setStandardDates() {
     const today = new Date();
     const dEl = document.getElementById('in_dato');
@@ -150,53 +135,36 @@ function setStandardDates() {
 
 function saveState() {
     const inputs = document.querySelectorAll('input, select, textarea');
-    const data = {
-        fields: {},
-        drones: drones,
-        pilots: pilots
-    };
-
+    const data = { fields: {}, drones: drones, pilots: pilots };
     inputs.forEach(el => {
-        if (el.id && !el.id.startsWith('search')) { // Ignorer dynamiske felt inni listene
+        if (el.id && !el.id.startsWith('search')) { 
             if (el.type === 'checkbox' || el.type === 'radio') {
-                if (el.checked) data.fields[el.id] = el.value; // For radio, lagre kun den valgte
+                if (el.checked) data.fields[el.id] = el.value; 
             } else {
                 data.fields[el.id] = el.value;
             }
         }
     });
-
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
 function loadState() {
     const savedJson = localStorage.getItem(STORAGE_KEY);
     if (!savedJson) return;
-
     const data = JSON.parse(savedJson);
     
-    // Gjenopprett felt
     if (data.fields) {
         for (const [id, value] of Object.entries(data.fields)) {
             const el = document.getElementById(id);
             if (el) {
                 if (el.type === 'checkbox') el.checked = true;
-                else if (el.type === 'radio') {
-                    if (el.value === value) el.checked = true;
-                } else el.value = value;
+                else if (el.type === 'radio') { if (el.value === value) el.checked = true; } 
+                else el.value = value;
             }
         }
     }
-
-    // Gjenopprett lister
-    if (data.drones) {
-        drones = data.drones;
-        renderDrones();
-    }
-    if (data.pilots) {
-        pilots = data.pilots;
-        renderPilots();
-    }
+    if (data.drones) { drones = data.drones; renderDrones(); }
+    if (data.pilots) { pilots = data.pilots; renderPilots(); }
 }
 
 function resetForm() {
@@ -206,8 +174,7 @@ function resetForm() {
     }
 }
 
-// --- UTSKRIFTSGENERERING ---
-
+// --- UTSKRIFT ---
 function formatDate(dateStr) {
     if (!dateStr) return "DD.MM.YYYY";
     const d = new Date(dateStr);
@@ -215,12 +182,11 @@ function formatDate(dateStr) {
 }
 
 function printDoc() {
-    saveState(); // Lagre før print
+    saveState(); 
 
     const lang = document.getElementById('in_spraak').value;
     const t = teksterData[lang];
     
-    // 1. Hent data
     const m = {
         mottaker: document.getElementById('in_mottaker').value || "[MOTTAKER]",
         adresse: document.getElementById('in_adresse').value,
@@ -228,6 +194,7 @@ function printDoc() {
         saksbehandler: document.getElementById('in_saksbehandler').value,
         ref: document.getElementById('in_ref').value,
         opNr: document.getElementById('in_opNr').value || "[OPNR]",
+        orgNr: document.getElementById('in_orgNr').value || "[ORGNR]",
         oppdrag: document.getElementById('in_oppdrag').value,
         art: document.getElementById('in_art').value || "[FORMÅL]",
         omrade: document.getElementById('in_omrade').value,
@@ -240,7 +207,6 @@ function printDoc() {
         gebyr: document.getElementById('in_gebyr_sats').value
     };
 
-    // 2. Regelsett (samle checkboxer)
     let regelsettArr = [];
     if (document.getElementById('reg_a1').checked) regelsettArr.push(document.getElementById('reg_a1').value);
     if (document.getElementById('reg_a2').checked) regelsettArr.push(document.getElementById('reg_a2').value);
@@ -250,23 +216,19 @@ function printDoc() {
     }
     const regelsettStr = regelsettArr.join(", ");
 
-    // 3. Fyll ut faste labels fra språkfil
+    // Fyll labels
     for (const [key, label] of Object.entries(t.labels)) {
         if (typeof label === 'string') {
-            const el = document.getElementById('lbl_' + key); // Eks: lbl_saksbehandler
+            const el = document.getElementById('lbl_' + key);
             if (el) el.innerText = label;
-            
-            // For output fields som saksbehandler signatur tittel
             if (key === 'stilling') { document.getElementById('lbl_stilling').innerText = label; }
         } else if (typeof label === 'object') {
-            // Tabell headers
             if (key === 'tabell') {
                 for (const [k, v] of Object.entries(label)) {
                     const th = document.getElementById('th_' + k);
                     if (th) th.innerText = v;
                 }
             }
-            // Seksjon headers
             if (key === 'header') {
                 for (const [k, v] of Object.entries(label)) {
                     const h = document.getElementById('h_' + k);
@@ -276,7 +238,7 @@ function printDoc() {
         }
     }
 
-    // 4. Fyll ut output felter
+    // Fyll output
     const map = {
         'out_saksbehandler': m.saksbehandler,
         'out_saksbehandler_sign': m.saksbehandler,
@@ -296,21 +258,18 @@ function printDoc() {
         'out_sjef_navn': m.sjefNavn,
         'out_sjef_tittel': m.sjefTittel
     };
-
     for (const [id, val] of Object.entries(map)) {
         const el = document.getElementById(id);
         if (el) el.innerText = val;
     }
 
-    // 5. Piloter liste til tekst
     let pilotText = pilots.map(p => `${p.navn} (tlf: ${p.tlf})`).join("\n");
-    document.getElementById('out_kontakt').innerText = pilotText; // Vises i tabelltoppen
+    document.getElementById('out_kontakt').innerText = pilotText; 
     document.getElementById('out_piloter_liste').innerText = "Se kontaktinformasjon"; 
 
-    // 6. Tekster fra tekstfeltene (som kan være redigert)
-    // Erstatt plassholdere i de redigerte tekstene
+    // Fyll inn redigerbare tekster
     let bakgrunn = document.getElementById('txt_edit_bakgrunn').value
-        .replace('{MOTTAKER}', m.mottaker).replace('{OPNR}', m.opNr);
+        .replace('{MOTTAKER}', m.mottaker).replace('{OPNR}', m.opNr).replace('{ORGNR}', m.orgNr);
     
     let vurdering = document.getElementById('txt_edit_vurdering').value
         .replace('{FORMAL}', m.art);
@@ -318,17 +277,17 @@ function printDoc() {
     let vedtak = document.getElementById('txt_edit_vedtak').value
         .replace('{MOTTAKER}', m.mottaker);
 
-    let gebyrTxt = document.getElementById('txt_edit_gebyr').value; // Allerede ferdig formatert i byttSpraak
+    let gebyrTxt = document.getElementById('txt_edit_gebyr').value; 
 
     document.getElementById('out_txt_bakgrunn').innerHTML = bakgrunn;
-    document.getElementById('out_txt_regelverk').innerText = t.regelverk; // Denne endres sjelden, hentes fra const
+    document.getElementById('out_txt_regelverk').innerText = t.regelverk; 
     document.getElementById('out_txt_vurdering').innerHTML = vurdering.replace(/\n/g, "<br>");
     document.getElementById('out_txt_vedtak').innerText = vedtak;
     document.getElementById('out_txt_gebyr').innerHTML = gebyrTxt.replace(/\n/g, "<br>");
     document.getElementById('out_txt_klage').innerText = t.klage;
     document.getElementById('out_txt_kopi').innerText = t.kopi;
 
-    // 7. Bygg vilkårsliste
+    // Vilkår
     const ul = document.getElementById('list_vilkar');
     ul.innerHTML = "";
     t.vilkar.forEach(punkt => {
@@ -341,7 +300,7 @@ function printDoc() {
         ul.appendChild(li);
     });
 
-    // 8. Bygg dronetabell
+    // Tabell
     const tbody = document.getElementById('tbody_droner');
     tbody.innerHTML = "";
     drones.forEach(d => {
@@ -350,11 +309,9 @@ function printDoc() {
         tbody.appendChild(tr);
     });
 
-    // 9. Print
     window.print();
 }
 
-// Lytt til endring på spesifikk kategori for å vise input felt
 document.getElementById('reg_spesifikk').addEventListener('change', function() {
     document.getElementById('in_spesifikk_ref').style.display = this.checked ? 'block' : 'none';
 });

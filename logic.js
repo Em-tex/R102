@@ -1,5 +1,5 @@
 // --- KONFIGURASJON & DATA ---
-const STORAGE_KEY = 'r102_autosave_v8';
+const STORAGE_KEY = 'r102_autosave_v9';
 const GEBYR_FORSKRIFT = "Forskrift av 28. januar 2026 nr. 125 om gebyr til Luftfartstilsynet mv.";
 const GEBYR_SATS_NY = "3180";
 const GEBYR_SATS_FORLENGELSE = "1610";
@@ -60,15 +60,11 @@ function setStortingetDate() {
     const fraInput = document.getElementById('in_fra');
     const year = fraInput.value ? new Date(fraInput.value).getFullYear() : new Date().getFullYear();
     
-    // Høytidelig åpning er som regel 2. hverdag (ikke søndag) i oktober.
+    // Høytidelig åpning er 2. hverdag (ikke søndag) i oktober.
     let d = new Date(year, 9, 1); // 1. oktober
     let workdayCount = 0;
     
-    // Vi søker etter den andre dagen som ikke er søndag.
-    // Lørdag regnes ofte som hverdag i denne sammenhengen hvis den faller slik,
-    // men i praksis havner det ofte på man/tirs/ons.
-    // Algoritme: Loop fremover fra 1. okt, tell dager som ikke er søndag. Stopp på nr 2.
-    
+    // Loop fremover og finn den 2. dagen som ikke er søndag
     while (workdayCount < 2) {
         if (d.getDay() !== 0) { // 0 = Søndag
             workdayCount++;
@@ -121,22 +117,19 @@ function checkDates() {
         }
     });
 
-    // 2. Sjekk om oktober er involvert for å vise Stortinget-varselet
-    // Sjekk om startdato er i oktober eller sluttdato er i oktober, eller om perioden dekker oktober
+    // 2. Sjekk om Stortingets åpning er relevant
     const stortingInput = document.getElementById('in_stortinget_dato');
     const stortingDiv = document.getElementById('div_stortinget_varsel');
     
-    // Forenklet sjekk: Er vi i nærheten av starten av oktober?
-    // Sjekker om perioden overlapper med 1. okt til 10. okt for aktuelle år
+    // Vi viser varselet hvis perioden overlapper med de to første ukene av oktober
     let showStortinget = false;
     let startYear = fra.getFullYear();
     let endYear = til.getFullYear();
     
     for (let y = startYear; y <= endYear; y++) {
         let octStart = new Date(y, 9, 1);
-        let octEnd = new Date(y, 9, 10); // Sjekker første 10 dager
+        let octEnd = new Date(y, 9, 14); // Sjekk første 14 dager
         
-        // Sjekk overlapp: (StartA <= EndB) and (EndA >= StartB)
         if (fra <= octEnd && til >= octStart) {
             showStortinget = true;
         }
@@ -144,7 +137,7 @@ function checkDates() {
 
     if (showStortinget) {
         stortingDiv.style.display = 'flex';
-        // Og sjekk om den spesifikke datoen er valgt
+        // Og sjekk om den spesifikke datoen er valgt (om brukeren ikke har endret den)
         if (stortingInput.value) {
             const stortingDate = new Date(stortingInput.value);
             if (stortingDate >= fra && stortingDate <= til) {
@@ -191,7 +184,7 @@ function renderNoFlyList() {
     });
 }
 
-// --- RESTEN AV LOGIKKEN (Uendret struktur) ---
+// --- RESTEN AV LOGIKKEN ---
 function togglePrivat(save = true) {
     const isPrivat = document.getElementById('check_privat').checked;
     const orgDiv = document.getElementById('div_orgNr');

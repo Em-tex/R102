@@ -1,6 +1,7 @@
 /* GRUNNOPPSETT */
 body {
-    font-family: 'Overpass', sans-serif;
+    /* Endret til Aptos, med fallback til Segoe UI (ligner) og sans-serif */
+    font-family: 'Aptos', 'Segoe UI', sans-serif;
     background-color: #f4f7f6;
     margin: 0;
     padding: 20px;
@@ -45,7 +46,9 @@ header {
 /* Input Styling */
 input, select, textarea {
     width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;
-    font-family: 'Overpass', sans-serif; font-size: 14px; box-sizing: border-box;
+    /* Sikrer at inputs også bruker Aptos */
+    font-family: 'Aptos', 'Segoe UI', sans-serif; 
+    font-size: 14px; box-sizing: border-box;
     transition: border-color 0.3s;
 }
 
@@ -109,6 +112,7 @@ button {
     background: #0056b3; color: white; border: none; padding: 12px 25px;
     font-size: 15px; border-radius: 25px; cursor: pointer; font-weight: 600;
     display: flex; align-items: center; gap: 8px; transition: background 0.2s;
+    font-family: 'Aptos', 'Segoe UI', sans-serif;
 }
 button:hover { background: #004494; }
 .btn-danger { background-color: #d32f2f !important; }
@@ -132,9 +136,10 @@ button:hover { background: #004494; }
     .paper-doc {
         display: block !important;
         width: 100%;
-        font-size: 10.5pt;
+        font-size: 11pt; /* Litt større for Aptos */
         line-height: 1.4;
         color: #000;
+        font-family: 'Aptos', sans-serif;
     }
 
     /* Logo header setup */
@@ -146,7 +151,7 @@ button:hover { background: #004494; }
     
     .logo-img { height: 50px; width: auto; }
     
-    .doc-meta table { font-size: 9.5pt; }
+    .doc-meta table { font-size: 10pt; }
     .doc-meta td { padding-left: 10px; vertical-align: top; }
     .doc-meta .bold { font-weight: bold; width: 100px; }
 
@@ -159,7 +164,7 @@ button:hover { background: #004494; }
     p { margin-top: 0; margin-bottom: 10px; text-align: justify; }
 
     /* Tabeller */
-    .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10pt; page-break-inside: avoid; }
+    .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10.5pt; page-break-inside: avoid; }
     .data-table th, .data-table td { border: 1px solid #000; padding: 5px 8px; text-align: left; vertical-align: top; }
     .data-table th { background-color: #f0f0f0; width: 30%; -webkit-print-color-adjust: exact; font-weight: bold; }
 

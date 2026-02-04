@@ -19,17 +19,16 @@
                     </select>
                 </div>
             </div>
-            <p>Fyll ut feltene. Oppsettet speiler nå strukturen i det ferdige dokumentet.</p>
+            <p>Fyll ut feltene. Endringer lagres automatisk.</p>
         </header>
 
         <div class="input-card">
             <h2><i class="fa-solid fa-envelope-open-text"></i> 1. Dokumenthode</h2>
-            <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">Dette havner øverst på side 1 i brevet.</p>
             
             <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;">
                 
                 <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; border: 1px solid #eee;">
-                    <h3 style="margin-top: 0; font-size: 1.1em; color: #444;"><i class="fa-solid fa-address-card"></i> Mottaker (Venstre side)</h3>
+                    <h3 style="margin-top: 0; font-size: 1.1em; color: #444;"><i class="fa-solid fa-address-card"></i> Mottaker</h3>
                     
                     <div class="input-group">
                         <label>Søker (Firma/Navn)</label>
@@ -55,7 +54,7 @@
                 </div>
 
                 <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; border: 1px solid #eee;">
-                    <h3 style="margin-top: 0; font-size: 1.1em; color: #444;"><i class="fa-solid fa-file-shield"></i> Metadata (Høyre side)</h3>
+                    <h3 style="margin-top: 0; font-size: 1.1em; color: #444;"><i class="fa-solid fa-file-shield"></i> Metadata</h3>
                     
                     <div class="input-group">
                         <label>Saksbehandler</label>
@@ -86,16 +85,21 @@
         </div>
 
         <div class="input-card">
-            <h2><i class="fa-solid fa-table-list"></i> 2. Søknadsinformasjon (Tabellen)</h2>
-            <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">Informasjonen her fyller ut "Bakgrunn" og hovedtabellen i vedtaket.</p>
+            <h2><i class="fa-solid fa-file-signature"></i> 2. Søknadsinformasjon</h2>
 
             <div style="border-bottom: 1px dashed #ccc; padding-bottom: 15px; margin-bottom: 15px;">
                 <div class="grid">
                     <div class="input-group">
-                        <label>Søknadstype (Påvirker tittel og gebyr)</label>
-                        <div class="radio-group">
-                            <label><input type="radio" name="type" id="type_ny" value="ny" checked onchange="oppdaterGebyr()"> Ny søknad</label>
-                            <label><input type="radio" name="type" id="type_forlengelse" value="forlengelse" onchange="oppdaterGebyr()"> Forlengelse</label>
+                        <label>Søknadstype</label>
+                        <div class="toggle-group">
+                            <div class="toggle-option">
+                                <input type="radio" name="type" id="type_ny" value="ny" checked onchange="oppdaterGebyr()">
+                                <label for="type_ny"><i class="fa-solid fa-plus-circle"></i> Ny søknad</label>
+                            </div>
+                            <div class="toggle-option">
+                                <input type="radio" name="type" id="type_forlengelse" value="forlengelse" onchange="oppdaterGebyr()">
+                                <label for="type_forlengelse"><i class="fa-solid fa-clock-rotate-left"></i> Forlengelse</label>
+                            </div>
                         </div>
                     </div>
                     <div class="input-group">
@@ -121,7 +125,7 @@
             </div>
 
             <div class="full-width" style="margin-bottom: 20px;">
-                <label>Regelsett (Rad 1 i tabell)</label>
+                <label>Regelsett</label>
                 <div class="checkbox-group inline-checkboxes">
                     <label><input type="checkbox" id="reg_a1" value="Åpen kategori, underkategori A1"> Åpen A1</label>
                     <label><input type="checkbox" id="reg_a2" value="Åpen kategori, underkategori A2"> Åpen A2</label>
@@ -132,7 +136,7 @@
             </div>
 
             <div style="background: #eef; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                <label style="margin-bottom: 10px; color: #333;"><i class="fa-solid fa-address-book"></i> Kontaktinformasjon (Rad 2 i tabell)</label>
+                <label style="margin-bottom: 10px; color: #333;"><i class="fa-solid fa-address-book"></i> Kontaktinformasjon</label>
                 <div class="grid">
                     <div class="input-group">
                         <label>Kontaktperson Navn</label>
@@ -151,29 +155,30 @@
 
             <div class="grid">
                 <div class="input-group">
-                    <label>Oppdragsgiver (Rad 3)</label>
+                    <label>Oppdragsgiver</label>
                     <input type="text" id="in_oppdrag" class="required">
                 </div>
                 <div class="input-group">
-                    <label>Art / Formål (Rad 4)</label>
+                    <label>Art / Formål</label>
                     <input type="text" id="in_art" class="required" placeholder="F.eks. Inspeksjon av tak">
                 </div>
             </div>
 
             <div class="grid" style="align-items: end;">
                 <div class="input-group">
-                    <label>Fra dato (Rad 5)</label>
+                    <label>Fra dato</label>
                     <input type="date" id="in_fra" class="required" onchange="checkDates()">
                 </div>
                 <div class="input-group">
-                    <label>Til dato (Rad 5)</label>
+                    <label>Til dato</label>
                     <input type="date" id="in_til" class="required" onchange="checkDates()">
                 </div>
             </div>
 
             <div class="full-width" style="margin-top: 15px;">
-                <label>Unntak / Flyforbudsdager (Vilkår)</label>
-                <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin-bottom: 5px; border: 1px solid #ffeeba; display:flex; align-items:center; gap:10px;">
+                <label>Unntak / Flyforbudsdager</label>
+                
+                <div id="div_stortinget_varsel" style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin-bottom: 5px; border: 1px solid #ffeeba; display:none; align-items:center; gap:10px;">
                     <i class="fa-solid fa-calendar-day"></i>
                     <label style="margin:0; font-weight:bold;">Stortingets åpning:</label>
                     <input type="date" id="in_stortinget_dato" onchange="checkDates()" style="padding: 3px; border:1px solid #d1a839; border-radius:3px;">
@@ -190,7 +195,7 @@
             </div>
 
             <div class="full-width" style="margin-top: 20px;">
-                <label>Operasjonsområde (Rad 6)</label>
+                <label>Operasjonsområde</label>
                 <div class="icon-input">
                     <i class="fa-solid fa-map"></i>
                     <textarea id="in_omrade" class="required" rows="2" placeholder="Adresse/sted/kartutsnitt"></textarea>
@@ -206,7 +211,7 @@
             </div>
 
             <div class="full-width" style="margin-top: 20px;">
-                <label>Piloter (Rad 7)</label>
+                <label>Piloter</label>
                 <div id="pilot_container"></div>
                 <button onclick="addPilot()" class="btn-small"><i class="fa-solid fa-user-plus"></i> Legg til pilot</button>
             </div>
@@ -214,7 +219,6 @@
 
         <div class="input-card">
             <h2><i class="fa-solid fa-plane"></i> 3. Droner</h2>
-            <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">Dette kommer i tabellen på side 2.</p>
             <div id="drone_container"></div>
             <button onclick="addDrone()" class="btn-small"><i class="fa-solid fa-plus"></i> Legg til drone</button>
         </div>

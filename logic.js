@@ -1,5 +1,5 @@
 // --- KONFIGURASJON & DATA ---
-const STORAGE_KEY = 'r102_autosave_v7';
+const STORAGE_KEY = 'r102_autosave_v8';
 const GEBYR_FORSKRIFT = "Forskrift av 28. januar 2026 nr. 125 om gebyr til Luftfartstilsynet mv.";
 const GEBYR_SATS_NY = "3180";
 const GEBYR_SATS_FORLENGELSE = "1610";
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (drones.length === 0) addDrone();
 
     togglePrivat(false); 
-    toggleAuthRef(); // Sjekk om auth-feltet skal vises
+    toggleAuthRef(); 
     byttSpraak(false);
     
     if (mapImageBase64) {
@@ -47,7 +47,6 @@ function toggleAuthRef() {
     const spec = document.getElementById('reg_spesifikk').checked;
     const stats = document.getElementById('reg_stats').checked;
     
-    // Vis feltet hvis enten spesifikk eller statsluftfart er valgt
     const refInput = document.getElementById('in_spesifikk_ref');
     if (spec || stats) {
         refInput.style.display = 'block';
@@ -61,13 +60,22 @@ function setStortingetDate() {
     const fraInput = document.getElementById('in_fra');
     const year = fraInput.value ? new Date(fraInput.value).getFullYear() : new Date().getFullYear();
     
-    let d = new Date(year, 9, 1); 
-    const dayOfWeek = d.getDay(); 
-
-    if (dayOfWeek === 6) {
-        d.setDate(3); 
-    } else if (dayOfWeek === 0) {
-        d.setDate(2); 
+    // Høytidelig åpning er som regel 2. hverdag (ikke søndag) i oktober.
+    let d = new Date(year, 9, 1); // 1. oktober
+    let workdayCount = 0;
+    
+    // Vi søker etter den andre dagen som ikke er søndag.
+    // Lørdag regnes ofte som hverdag i denne sammenhengen hvis den faller slik,
+    // men i praksis havner det ofte på man/tirs/ons.
+    // Algoritme: Loop fremover fra 1. okt, tell dager som ikke er søndag. Stopp på nr 2.
+    
+    while (workdayCount < 2) {
+        if (d.getDay() !== 0) { // 0 = Søndag
+            workdayCount++;
+        }
+        if (workdayCount < 2) {
+            d.setDate(d.getDate() + 1);
+        }
     }
 
     const day = String(d.getDate()).padStart(2, '0');
@@ -85,8 +93,12 @@ function checkDates() {
     const fra = document.getElementById('in_fra').valueAsDate;
     const til = document.getElementById('in_til').valueAsDate;
     
-    if (!fra || !til) return;
+    if (!fra || !til) {
+        document.getElementById('div_stortinget_varsel').style.display = 'none';
+        return;
+    }
 
+    // 1. Sjekk faste datoer
     STANDARD_NOFLY.forEach(std => {
         let hit = false;
         let startYear = fra.getFullYear();
@@ -109,18 +121,44 @@ function checkDates() {
         }
     });
 
+    // 2. Sjekk om oktober er involvert for å vise Stortinget-varselet
+    // Sjekk om startdato er i oktober eller sluttdato er i oktober, eller om perioden dekker oktober
     const stortingInput = document.getElementById('in_stortinget_dato');
-    if (stortingInput.value) {
-        const stortingDate = new Date(stortingInput.value);
-        if (stortingDate >= fra && stortingDate <= til) {
-            const day = String(stortingDate.getDate()).padStart(2, '0');
-            const month = String(stortingDate.getMonth() + 1).padStart(2, '0');
-            const label = `${day}.${month} (Stortingets åpning)`;
+    const stortingDiv = document.getElementById('div_stortinget_varsel');
+    
+    // Forenklet sjekk: Er vi i nærheten av starten av oktober?
+    // Sjekker om perioden overlapper med 1. okt til 10. okt for aktuelle år
+    let showStortinget = false;
+    let startYear = fra.getFullYear();
+    let endYear = til.getFullYear();
+    
+    for (let y = startYear; y <= endYear; y++) {
+        let octStart = new Date(y, 9, 1);
+        let octEnd = new Date(y, 9, 10); // Sjekker første 10 dager
+        
+        // Sjekk overlapp: (StartA <= EndB) and (EndA >= StartB)
+        if (fra <= octEnd && til >= octStart) {
+            showStortinget = true;
+        }
+    }
 
-            if (!activeNoFlyDates.some(x => x.label === label)) {
-                activeNoFlyDates.push({ label: label, auto: true });
+    if (showStortinget) {
+        stortingDiv.style.display = 'flex';
+        // Og sjekk om den spesifikke datoen er valgt
+        if (stortingInput.value) {
+            const stortingDate = new Date(stortingInput.value);
+            if (stortingDate >= fra && stortingDate <= til) {
+                const day = String(stortingDate.getDate()).padStart(2, '0');
+                const month = String(stortingDate.getMonth() + 1).padStart(2, '0');
+                const label = `${day}.${month} (Stortingets åpning)`;
+
+                if (!activeNoFlyDates.some(x => x.label === label)) {
+                    activeNoFlyDates.push({ label: label, auto: true });
+                }
             }
         }
+    } else {
+        stortingDiv.style.display = 'none';
     }
 
     renderNoFlyList();
@@ -153,47 +191,27 @@ function renderNoFlyList() {
     });
 }
 
-// --- PRIVATPERSON ---
+// --- RESTEN AV LOGIKKEN (Uendret struktur) ---
 function togglePrivat(save = true) {
     const isPrivat = document.getElementById('check_privat').checked;
     const orgDiv = document.getElementById('div_orgNr');
-    
-    if (isPrivat) {
-        orgDiv.style.display = 'none';
-    } else {
-        orgDiv.style.display = 'block';
-    }
-    
+    orgDiv.style.display = isPrivat ? 'none' : 'block';
     byttSpraak(false);
     if(save) saveState();
 }
 
-// --- VALIDERING ---
 function validateForm() {
     let isValid = true;
     const requiredInputs = document.querySelectorAll('.required');
-    
     requiredInputs.forEach(el => {
         if (el.offsetParent !== null) { 
-            if (!el.value.trim()) {
-                el.classList.add('input-error');
-                isValid = false;
-            } else {
-                el.classList.remove('input-error');
-            }
+            if (!el.value.trim()) { el.classList.add('input-error'); isValid = false; } 
+            else { el.classList.remove('input-error'); }
         }
     });
-
-    requiredInputs.forEach(el => {
-        el.addEventListener('input', function() {
-            if(this.value.trim()) this.classList.remove('input-error');
-        });
-    });
-
     return isValid;
 }
 
-// --- GENERELT ---
 function oppdaterGebyr() {
     const isExtension = document.getElementById('type_forlengelse').checked;
     document.getElementById('in_gebyr_sats').value = isExtension ? GEBYR_SATS_FORLENGELSE : GEBYR_SATS_NY;
@@ -222,14 +240,11 @@ function byttSpraak(resetTexts = true) {
         document.getElementById('txt_edit_gebyr').value = t.gebyr.replace('{BELOP}', gebyrSats).replace('{FORSKRIFT}', GEBYR_FORSKRIFT).replace('{TYPE}', typeTxt);
     };
 
-    if (resetTexts) {
-        fillTexts();
-    } else {
-        if (!document.getElementById('txt_edit_bakgrunn').value) fillTexts();
-        else {
-            document.getElementById('txt_edit_bakgrunn').value = rawBakgrunn.replace('{TYPE}', typeTxt);
-            document.getElementById('txt_edit_gebyr').value = t.gebyr.replace('{BELOP}', gebyrSats).replace('{FORSKRIFT}', GEBYR_FORSKRIFT).replace('{TYPE}', typeTxt);
-        }
+    if (resetTexts) fillTexts();
+    else if (!document.getElementById('txt_edit_bakgrunn').value) fillTexts();
+    else {
+        document.getElementById('txt_edit_bakgrunn').value = rawBakgrunn.replace('{TYPE}', typeTxt);
+        document.getElementById('txt_edit_gebyr').value = t.gebyr.replace('{BELOP}', gebyrSats).replace('{FORSKRIFT}', GEBYR_FORSKRIFT).replace('{TYPE}', typeTxt);
     }
     saveState();
 }
@@ -351,16 +366,13 @@ function printDoc() {
     if (document.getElementById('reg_a1').checked) regelsettArr.push(document.getElementById('reg_a1').value);
     if (document.getElementById('reg_a2').checked) regelsettArr.push(document.getElementById('reg_a2').value);
     
-    // Spesialhåndtering for Spesifikk og Statsluftfart med auth-nummer
     const authRef = document.getElementById('in_spesifikk_ref').value;
-    
     if (document.getElementById('reg_spesifikk').checked) {
         regelsettArr.push(`Spesifikk kategori (${authRef})`);
     }
     if (document.getElementById('reg_stats').checked) {
         regelsettArr.push(`Statsluftfart (${authRef})`);
     }
-    
     const regelsettStr = regelsettArr.join(", ");
 
     for (const [key, label] of Object.entries(t.labels)) {
@@ -424,6 +436,5 @@ function printDoc() {
     window.print();
 }
 
-// Oppdater lyttere for regelsett endringer
 document.getElementById('reg_spesifikk').addEventListener('change', toggleAuthRef);
 document.getElementById('reg_stats').addEventListener('change', toggleAuthRef);

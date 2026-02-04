@@ -1,7 +1,7 @@
 /* GRUNNOPPSETT */
 body {
     font-family: 'Overpass', sans-serif;
-    background-color: #f4f4f4;
+    background-color: #f4f7f6;
     margin: 0;
     padding: 20px;
     color: #333;
@@ -9,112 +9,182 @@ body {
 
 /* SKJERM-MODUS (Inputs) */
 .workspace {
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 0 auto 100px auto;
     background: white;
     padding: 40px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border-radius: 10px;
+}
+
+header {
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eef;
+    padding-bottom: 20px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .input-card {
     background: #fff;
+    border: 1px solid #e0e0e0;
     border-left: 5px solid #0056b3;
-    padding: 20px;
-    margin-bottom: 20px;
-    border: 1px solid #eee;
-    border-left-width: 5px;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 }
 
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 15px; }
 .full-width { width: 100%; margin-bottom: 15px; }
 
+/* Input Styling */
 input, select, textarea {
-    width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;
+    width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;
     font-family: 'Overpass', sans-serif; font-size: 14px; box-sizing: border-box;
+    transition: border-color 0.3s;
 }
 
-label { font-weight: bold; font-size: 12px; display: block; margin-bottom: 5px; color: #555; }
+input:focus, textarea:focus, select:focus {
+    border-color: #0056b3;
+    outline: none;
+}
 
-/* Knapp */
+label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 6px; color: #444; }
+
+/* Ikon i input */
+.icon-input {
+    position: relative;
+}
+.icon-input i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+.icon-input input, .icon-input textarea {
+    padding-left: 35px;
+}
+.icon-input textarea {
+    padding-top: 10px; 
+}
+.icon-input i.fa-map { top: 20px; } /* Juster for textarea */
+
+/* Checkbox & Radio */
+.checkbox-group, .radio-group {
+    display: flex; gap: 15px; flex-wrap: wrap; margin-top: 5px;
+}
+.checkbox-group label, .radio-group label {
+    font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 5px;
+}
+
+/* Dynamiske lister styling */
+.dynamic-row {
+    display: flex; gap: 10px; margin-bottom: 10px; align-items: center;
+}
+.btn-remove {
+    background: #ffebee; color: #c62828; border: 1px solid #ffcdd2;
+    width: 35px; height: 35px; border-radius: 50%; display: flex; 
+    align-items: center; justify-content: center; cursor: pointer; padding: 0;
+}
+.btn-remove:hover { background: #ef9a9a; }
+
+.btn-small {
+    padding: 8px 15px; font-size: 13px; background: #e3f2fd; color: #0d47a1;
+}
+.btn-small:hover { background: #bbdefb; }
+
+/* Action Bar */
 .action-bar {
-    position: fixed; bottom: 0; left: 0; right: 0; background: white;
-    padding: 15px; text-align: center; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: white; padding: 10px 25px; border-radius: 50px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2); display: flex; gap: 15px; z-index: 1000;
 }
 button {
-    background: #0056b3; color: white; border: none; padding: 12px 30px;
-    font-size: 16px; border-radius: 30px; cursor: pointer; font-weight: bold;
+    background: #0056b3; color: white; border: none; padding: 12px 25px;
+    font-size: 15px; border-radius: 25px; cursor: pointer; font-weight: 600;
+    display: flex; align-items: center; gap: 8px; transition: background 0.2s;
 }
 button:hover { background: #004494; }
+.btn-danger { background-color: #d32f2f !important; }
+.btn-danger:hover { background-color: #b71c1c !important; }
 
 /* DOKUMENT-MODUS (Skjult på skjerm) */
 .paper-doc { display: none; }
 
 /* -------------------------------------------
-   PRINT-MODUS (Det som skjer når man printer)
+   PRINT-MODUS
    ------------------------------------------- */
 @media print {
-    /* VIKTIG: Fjerner nettleserens header/footer */
-    @page { margin: 0; size: A4; }
+    @page { 
+        margin: 20mm 20mm 20mm 20mm; /* Standard marger */
+        size: A4; 
+    }
     
     body { background: white; margin: 0; padding: 0; }
     .no-print, .workspace, .action-bar { display: none !important; }
 
-    /* Vis dokumentet */
     .paper-doc {
         display: block !important;
         width: 100%;
-        /* Vi setter margene internt her i stedet */
-        padding: 15mm 20mm; 
-        box-sizing: border-box;
         font-size: 10.5pt;
         line-height: 1.4;
+        color: #000;
     }
 
-    /* Layout i dokumentet */
-    .doc-header { display: flex; justify-content: space-between; margin-bottom: 40px; }
-    .logo-img { height: 60px; width: auto; } /* Juster evt størrelse her */
+    /* Logo header setup */
+    .doc-header { 
+        display: flex; 
+        justify-content: space-between; 
+        margin-bottom: 40px; 
+    }
     
-    .doc-meta table { font-size: 10pt; }
-    .doc-meta td { padding-left: 15px; vertical-align: top; }
-    .doc-meta .bold { font-weight: bold; width: 110px; }
+    .logo-img { height: 50px; width: auto; }
+    
+    .doc-meta table { font-size: 9.5pt; }
+    .doc-meta td { padding-left: 10px; vertical-align: top; }
+    .doc-meta .bold { font-weight: bold; width: 100px; }
 
-    .address-block { margin-left: 5px; margin-bottom: 50px; font-size: 11pt; line-height: 1.5; }
+    .address-block { margin-left: 5px; margin-bottom: 40px; font-size: 11pt; line-height: 1.5; }
     .uppercase { text-transform: uppercase; }
 
-    .doc-title { font-size: 16pt; margin-bottom: 25px; }
+    .doc-title { font-size: 16pt; margin-bottom: 20px; margin-top: 0; }
 
-    h3 { font-size: 11pt; margin-bottom: 5px; margin-top: 20px; }
+    h3 { font-size: 11pt; margin-bottom: 5px; margin-top: 15px; page-break-after: avoid; }
     p { margin-top: 0; margin-bottom: 10px; text-align: justify; }
 
     /* Tabeller */
-    .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10pt; }
-    .data-table th, .data-table td { border: 1px solid #000; padding: 6px 10px; text-align: left; vertical-align: top; }
-    .data-table th { background-color: #f0f0f0; width: 30%; -webkit-print-color-adjust: exact; }
+    .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10pt; page-break-inside: avoid; }
+    .data-table th, .data-table td { border: 1px solid #000; padding: 5px 8px; text-align: left; vertical-align: top; }
+    .data-table th { background-color: #f0f0f0; width: 30%; -webkit-print-color-adjust: exact; font-weight: bold; }
+
+    /* Lister */
+    ul { margin-top: 0; padding-left: 20px; }
+    li { margin-bottom: 4px; }
+
+    /* Side 2 header spacing fix */
+    .page-break-wrapper {
+        page-break-before: always;
+        margin-top: 30mm; /* Ekstra luft på toppen av side 2 */
+    }
 
     /* Signatur */
-    .signature-block { display: flex; justify-content: space-between; margin-top: 50px; page-break-inside: avoid; }
+    .signature-block { display: flex; justify-content: space-between; margin-top: 40px; page-break-inside: avoid; }
     .sign-col { width: 45%; }
-    .electronic-msg { margin-top: 40px; font-style: italic; font-size: 9pt; }
+    .electronic-msg { margin-top: 30px; font-style: italic; font-size: 9pt; }
 
     /* Footer */
     .doc-footer {
-        margin-top: 50px; border-top: 1px solid #ccc; padding-top: 10px;
+        position: fixed; bottom: 0; left: 0; right: 0;
+        border-top: 1px solid #ccc; padding-top: 5px;
         display: flex; justify-content: space-between; font-size: 8pt; color: #666;
-        page-break-inside: avoid;
+        background: white;
     }
     .right { text-align: right; }
-    
     .small-text { font-size: 9pt; color: #333; }
-}
-
-/* Legg dette nederst i style.css eller sammen med de andre knappestilene */
-
-.btn-danger {
-    background-color: #d9534f !important; /* Rød farge */
-    color: white;
-}
-
-.btn-danger:hover {
-    background-color: #c9302c !important;
 }

@@ -19,116 +19,109 @@
                     </select>
                 </div>
             </div>
-            <p>Fyll ut feltene. Endringer lagres automatisk.</p>
+            <p>Fyll ut feltene. Oppsettet speiler nå strukturen i det ferdige dokumentet.</p>
         </header>
 
         <div class="input-card">
-            <h2><i class="fa-solid fa-file-contract"></i> 1. Saksdetaljer</h2>
+            <h2><i class="fa-solid fa-envelope-open-text"></i> 1. Dokumenthode</h2>
+            <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">Dette havner øverst på side 1 i brevet.</p>
             
-            <div class="grid">
-                <div class="input-group">
-                    <label>Søknadstype</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="type" id="type_ny" value="ny" checked onchange="oppdaterGebyr()"> Ny søknad</label>
-                        <label><input type="radio" name="type" id="type_forlengelse" value="forlengelse" onchange="oppdaterGebyr()"> Forlengelse</label>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label>Operatørnummer</label>
-                    <div class="icon-input">
-                        <i class="fa-solid fa-id-card"></i>
-                        <input type="text" id="in_opNr" class="required" placeholder="NOR...">
-                    </div>
-                </div>
+            <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;">
                 
-                <div class="input-group">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <label>Organisasjonsnummer</label>
-                        <label style="font-weight: normal; font-size: 0.85em; cursor: pointer;">
-                            <input type="checkbox" id="check_privat" onchange="togglePrivat()"> Privatperson
-                        </label>
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; border: 1px solid #eee;">
+                    <h3 style="margin-top: 0; font-size: 1.1em; color: #444;"><i class="fa-solid fa-address-card"></i> Mottaker (Venstre side)</h3>
+                    
+                    <div class="input-group">
+                        <label>Søker (Firma/Navn)</label>
+                        <div class="icon-input">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="in_mottaker" class="required" placeholder="Navn på søker">
+                        </div>
                     </div>
-                    <div class="icon-input" id="div_orgNr">
-                        <i class="fa-solid fa-building"></i>
-                        <input type="text" id="in_orgNr" placeholder="999 999 999">
+                    <div class="input-group" style="margin-top: 10px;">
+                        <label>Adresse</label>
+                        <div class="icon-input">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <input type="text" id="in_adresse" class="required" placeholder="Gateadresse">
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-top: 10px;">
+                        <label>Poststed</label>
+                        <div class="icon-input">
+                            <i class="fa-solid fa-city"></i>
+                            <input type="text" id="in_poststed" class="required" placeholder="Postnr og Sted">
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="grid">
-                <div class="input-group">
-                    <label>Søker (Firma/Navn)</label>
-                    <div class="icon-input">
-                        <i class="fa-solid fa-user"></i>
-                        <input type="text" id="in_mottaker" class="required" placeholder="Navn på søker">
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; border: 1px solid #eee;">
+                    <h3 style="margin-top: 0; font-size: 1.1em; color: #444;"><i class="fa-solid fa-file-shield"></i> Metadata (Høyre side)</h3>
+                    
+                    <div class="input-group">
+                        <label>Saksbehandler</label>
+                        <div class="icon-input">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <input type="text" id="in_saksbehandler" class="required" placeholder="Ditt navn">
+                        </div>
                     </div>
-                </div>
-                <div class="input-group">
-                    <label>Adresse</label>
-                    <div class="icon-input">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <input type="text" id="in_adresse" class="required" placeholder="Gateadresse">
+                    <div class="input-group" style="margin-top: 10px;">
+                        <label>Vår Ref (P360)</label>
+                        <div class="icon-input">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <input type="text" id="in_ref" class="required" placeholder="26/xxxxx-...">
+                        </div>
                     </div>
-                </div>
-                <div class="input-group">
-                    <label>Poststed</label>
-                    <div class="icon-input">
-                        <i class="fa-solid fa-city"></i>
-                        <input type="text" id="in_poststed" class="required" placeholder="Postnr og Sted">
+                    <div class="grid" style="margin-top: 10px; gap: 10px;">
+                        <div>
+                            <label>Vår Dato</label>
+                            <input type="date" id="in_dato" class="required">
+                        </div>
+                        <div>
+                            <label>Deres Dato</label>
+                            <input type="date" id="in_deresDato">
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="grid" style="margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 15px;">
-                <div class="input-group">
-                    <label>Kontaktperson Navn</label>
-                    <div class="icon-input"><i class="fa-solid fa-user-tag"></i><input type="text" id="in_kontakt_navn" class="required"></div>
-                </div>
-                <div class="input-group">
-                    <label>Kontakt Telefon</label>
-                    <div class="icon-input"><i class="fa-solid fa-phone"></i><input type="text" id="in_kontakt_tlf" class="required"></div>
-                </div>
-                <div class="input-group">
-                    <label>Kontakt E-post</label>
-                    <div class="icon-input"><i class="fa-solid fa-envelope"></i><input type="text" id="in_kontakt_epost" class="required"></div>
-                </div>
-            </div>
-
-            <hr>
-
-            <div class="grid">
-                <div class="input-group">
-                    <label>Saksbehandler</label>
-                    <div class="icon-input">
-                        <i class="fa-solid fa-user-tie"></i>
-                        <input type="text" id="in_saksbehandler" class="required" placeholder="Ditt navn">
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label>Vår Ref (P360)</label>
-                    <div class="icon-input">
-                        <i class="fa-solid fa-folder-open"></i>
-                        <input type="text" id="in_ref" class="required" placeholder="26/xxxxx-...">
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label>Vår Dato</label>
-                    <input type="date" id="in_dato" class="required">
-                </div>
-            </div>
-            <div class="grid">
-                <div class="input-group">
-                    <label>Deres Dato</label>
-                    <input type="date" id="in_deresDato">
                 </div>
             </div>
         </div>
 
         <div class="input-card">
-            <h2><i class="fa-solid fa-helicopter"></i> 2. Operasjon</h2>
-            
-            <div class="full-width">
-                <label>Regelsett</label>
+            <h2><i class="fa-solid fa-table-list"></i> 2. Søknadsinformasjon (Tabellen)</h2>
+            <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">Informasjonen her fyller ut "Bakgrunn" og hovedtabellen i vedtaket.</p>
+
+            <div style="border-bottom: 1px dashed #ccc; padding-bottom: 15px; margin-bottom: 15px;">
+                <div class="grid">
+                    <div class="input-group">
+                        <label>Søknadstype (Påvirker tittel og gebyr)</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="type" id="type_ny" value="ny" checked onchange="oppdaterGebyr()"> Ny søknad</label>
+                            <label><input type="radio" name="type" id="type_forlengelse" value="forlengelse" onchange="oppdaterGebyr()"> Forlengelse</label>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Operatørnummer</label>
+                        <div class="icon-input">
+                            <i class="fa-solid fa-id-card"></i>
+                            <input type="text" id="in_opNr" class="required" placeholder="NOR...">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label>Organisasjonsnummer</label>
+                            <label style="font-weight: normal; font-size: 0.85em; cursor: pointer;">
+                                <input type="checkbox" id="check_privat" onchange="togglePrivat()"> Privatperson
+                            </label>
+                        </div>
+                        <div class="icon-input" id="div_orgNr">
+                            <i class="fa-solid fa-building"></i>
+                            <input type="text" id="in_orgNr" placeholder="999 999 999">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="full-width" style="margin-bottom: 20px;">
+                <label>Regelsett (Rad 1 i tabell)</label>
                 <div class="checkbox-group inline-checkboxes">
                     <label><input type="checkbox" id="reg_a1" value="Åpen kategori, underkategori A1"> Åpen A1</label>
                     <label><input type="checkbox" id="reg_a2" value="Åpen kategori, underkategori A2"> Åpen A2</label>
@@ -138,41 +131,55 @@
                 <input type="text" id="in_spesifikk_ref" placeholder="Autorisasjonsnummer" style="margin-top: 5px; display:none;">
             </div>
 
+            <div style="background: #eef; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                <label style="margin-bottom: 10px; color: #333;"><i class="fa-solid fa-address-book"></i> Kontaktinformasjon (Rad 2 i tabell)</label>
+                <div class="grid">
+                    <div class="input-group">
+                        <label>Kontaktperson Navn</label>
+                        <div class="icon-input"><i class="fa-solid fa-user-tag"></i><input type="text" id="in_kontakt_navn" class="required"></div>
+                    </div>
+                    <div class="input-group">
+                        <label>Kontakt Telefon</label>
+                        <div class="icon-input"><i class="fa-solid fa-phone"></i><input type="text" id="in_kontakt_tlf" class="required"></div>
+                    </div>
+                    <div class="input-group">
+                        <label>Kontakt E-post</label>
+                        <div class="icon-input"><i class="fa-solid fa-envelope"></i><input type="text" id="in_kontakt_epost" class="required"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="grid">
                 <div class="input-group">
-                    <label>Oppdragsgiver</label>
+                    <label>Oppdragsgiver (Rad 3)</label>
                     <input type="text" id="in_oppdrag" class="required">
                 </div>
                 <div class="input-group">
-                    <label>Art (Formål)</label>
+                    <label>Art / Formål (Rad 4)</label>
                     <input type="text" id="in_art" class="required" placeholder="F.eks. Inspeksjon av tak">
                 </div>
             </div>
 
-            <div class="grid">
+            <div class="grid" style="align-items: end;">
                 <div class="input-group">
-                    <label>Fra dato</label>
+                    <label>Fra dato (Rad 5)</label>
                     <input type="date" id="in_fra" class="required" onchange="checkDates()">
                 </div>
                 <div class="input-group">
-                    <label>Til dato</label>
+                    <label>Til dato (Rad 5)</label>
                     <input type="date" id="in_til" class="required" onchange="checkDates()">
                 </div>
             </div>
 
-            <div class="full-width">
-                <label>Dager med flyforbud</label>
-                
-                <div style="background: #fff3cd; color: #856404; padding: 12px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #ffeeba;">
-                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                        <i class="fa-solid fa-circle-exclamation" style="font-size: 1.2em;"></i>
-                        <label style="margin: 0; white-space: nowrap; font-weight: bold; color: #856404;">Stortingets åpning (dato):</label>
-                        <input type="date" id="in_stortinget_dato" onchange="checkDates()" style="width: auto; padding: 5px; border: 1px solid #d1a839; border-radius: 4px;">
-                        <span style="font-size: 0.9em;"><strong>Vennligst kontroller!</strong> (Systemet har foreslått dato, men den kan variere)</span>
-                    </div>
+            <div class="full-width" style="margin-top: 15px;">
+                <label>Unntak / Flyforbudsdager (Vilkår)</label>
+                <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin-bottom: 5px; border: 1px solid #ffeeba; display:flex; align-items:center; gap:10px;">
+                    <i class="fa-solid fa-calendar-day"></i>
+                    <label style="margin:0; font-weight:bold;">Stortingets åpning:</label>
+                    <input type="date" id="in_stortinget_dato" onchange="checkDates()" style="padding: 3px; border:1px solid #d1a839; border-radius:3px;">
+                    <small>(Kontroller dato)</small>
                 </div>
-
-                <label style="font-size: 0.9em; color: #666;">Aktive forbudsdager i perioden:</label>
+                
                 <div class="no-fly-wrapper">
                     <ul id="no_fly_list" class="tag-list"></ul>
                     <div style="display: flex; gap: 5px; margin-top: 5px;">
@@ -182,35 +189,38 @@
                 </div>
             </div>
 
-            <div class="full-width">
-                <label>Område (Tekst)</label>
+            <div class="full-width" style="margin-top: 20px;">
+                <label>Operasjonsområde (Rad 6)</label>
                 <div class="icon-input">
                     <i class="fa-solid fa-map"></i>
                     <textarea id="in_omrade" class="required" rows="2" placeholder="Adresse/sted/kartutsnitt"></textarea>
                 </div>
-                <label style="margin-top: 10px;">Last opp kartutsnitt (Bilde)</label>
-                <input type="file" id="in_kart_bilde" accept="image/*" onchange="previewImage()">
+                <div style="margin-top: 5px;">
+                    <label style="font-weight: normal; font-size: 0.9em;">Last opp kartutsnitt (Bilde):</label>
+                    <input type="file" id="in_kart_bilde" accept="image/*" onchange="previewImage()">
+                </div>
                 <div id="image_preview_container" style="margin-top: 10px; display:none;">
-                    <img id="img_preview" style="max-height: 150px; border: 1px solid #ccc;">
+                    <img id="img_preview" style="max-height: 100px; border: 1px solid #ccc;">
                     <button class="btn-remove" onclick="removeImage()" style="display:inline-flex; vertical-align:top;">X</button>
                 </div>
             </div>
 
-            <div class="full-width">
-                <label>Piloter (Kun navn)</label>
+            <div class="full-width" style="margin-top: 20px;">
+                <label>Piloter (Rad 7)</label>
                 <div id="pilot_container"></div>
-                <button onclick="addPilot()" class="btn-small"><i class="fa-solid fa-plus"></i> Legg til pilot</button>
+                <button onclick="addPilot()" class="btn-small"><i class="fa-solid fa-user-plus"></i> Legg til pilot</button>
             </div>
         </div>
 
         <div class="input-card">
             <h2><i class="fa-solid fa-plane"></i> 3. Droner</h2>
+            <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">Dette kommer i tabellen på side 2.</p>
             <div id="drone_container"></div>
             <button onclick="addDrone()" class="btn-small"><i class="fa-solid fa-plus"></i> Legg til drone</button>
         </div>
 
         <div class="input-card">
-            <h2><i class="fa-solid fa-pen-to-square"></i> 4. Tilpasning av vedtak</h2>
+            <h2><i class="fa-solid fa-pen-to-square"></i> 4. Signatur & Tekst</h2>
             <div class="grid">
                 <div class="input-group">
                     <label>Seksjonssjef Navn</label>
@@ -221,11 +231,12 @@
                     <input type="text" id="in_sjef_tittel" value="seksjonssjef">
                 </div>
             </div>
+            
             <details>
-                <summary style="cursor: pointer; color: #0056b3; font-weight: bold; padding: 10px;">
-                    <i class="fa-solid fa-edit"></i> Klikk for å redigere standardtekster (Lovhjemler, Gebyr m.m.)
+                <summary style="cursor: pointer; color: #0056b3; font-weight: bold; padding: 10px; background: #eef; border-radius: 5px; margin-top: 10px;">
+                    <i class="fa-solid fa-gear"></i> Avansert: Rediger standardtekster og gebyr
                 </summary>
-                <div style="padding: 15px; background: #f9f9f9; border-radius: 5px;">
+                <div style="padding: 15px; background: #f9f9f9; border-radius: 5px; margin-top: 5px;">
                     <label>Bakgrunnstekst</label><textarea id="txt_edit_bakgrunn" rows="3"></textarea>
                     <label>Vurdering</label><textarea id="txt_edit_vurdering" rows="6"></textarea>
                     <label>Vedtakstekst</label><textarea id="txt_edit_vedtak" rows="4"></textarea>

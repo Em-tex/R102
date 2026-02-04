@@ -162,11 +162,12 @@
             <div class="full-width">
                 <label>Dager med flyforbud</label>
                 
-                <div style="background: #f0f7ff; padding: 10px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #cce5ff;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <label style="margin: 0; white-space: nowrap;">Stortingets åpning (dato):</label>
-                        <input type="date" id="in_stortinget_dato" onchange="checkDates()" style="width: auto; padding: 5px;">
-                        <small style="color: #666;">(Standard: første hverdag i oktober. Endre ved behov)</small>
+                <div style="background: #fff3cd; color: #856404; padding: 12px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #ffeeba;">
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <i class="fa-solid fa-circle-exclamation" style="font-size: 1.2em;"></i>
+                        <label style="margin: 0; white-space: nowrap; font-weight: bold; color: #856404;">Stortingets åpning (dato):</label>
+                        <input type="date" id="in_stortinget_dato" onchange="checkDates()" style="width: auto; padding: 5px; border: 1px solid #d1a839; border-radius: 4px;">
+                        <span style="font-size: 0.9em;"><strong>Vennligst kontroller!</strong> (Systemet har foreslått dato, men den kan variere)</span>
                     </div>
                 </div>
 
@@ -174,7 +175,7 @@
                 <div class="no-fly-wrapper">
                     <ul id="no_fly_list" class="tag-list"></ul>
                     <div style="display: flex; gap: 5px; margin-top: 5px;">
-                        <input type="text" id="new_nofly_text" placeholder="Legg til egendefinert dag (f.eks 01.10 Stortingets åpning)" style="flex:1">
+                        <input type="text" id="new_nofly_text" placeholder="Legg til egendefinert dag" style="flex:1">
                         <button class="btn-small" onclick="addCustomNoFly()">Legg til</button>
                     </div>
                 </div>
@@ -248,9 +249,6 @@
                      <img src="logo.png" alt="Luftfartstilsynet Logo" class="logo-img">
                 </div>
                 <div class="doc-meta">
-                     <div id="out_mottaker_meta" style="font-weight: bold; margin-bottom: 5px; display:none;"></div>
-                     <div id="out_adresse_meta" style="display:none;"></div>
-                     
                     <table>
                         <tr><td class="bold" id="lbl_saksbehandler">Saksbehandler:</td><td id="out_saksbehandler"></td></tr>
                         <tr><td class="bold" id="lbl_tlf">Telefon direkte:</td><td></td></tr>

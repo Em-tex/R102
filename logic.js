@@ -1,10 +1,9 @@
 // --- KONFIGURASJON & DATA ---
-const STORAGE_KEY = 'r102_autosave_v5';
+const STORAGE_KEY = 'r102_autosave_v6';
 const GEBYR_FORSKRIFT = "Forskrift av 28. januar 2026 nr. 125 om gebyr til Luftfartstilsynet mv.";
 const GEBYR_SATS_NY = "3180";
 const GEBYR_SATS_FORLENGELSE = "1610";
 
-// Faste datoer (MM-DD)
 const STANDARD_NOFLY = [
     { date: "05-17", label: "17.05 (nasjonaldagen)" },
     { date: "12-31", label: "31.12-01.01 (nyttårsaften og første nyttårsdag)" }, 
@@ -19,11 +18,10 @@ let mapImageBase64 = null;
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof teksterData === 'undefined') { alert("Feil: tekster.js mangler."); return; }
 
-    setStandardDates();     // Setter dagens dato
-    setStortingetDate();    // NY: Beregner åpningsdato for Stortinget
-    loadState();            // Laster lagret data (overskriver datoer hvis de var lagret)
+    setStandardDates();
+    setStortingetDate();    // Beregner åpningsdato
+    loadState();            // Laster data (overskriver datoer hvis de var lagret manuelt)
     
-    // Sett initialt gebyr hvis tomt
     if(!document.getElementById('in_gebyr_sats').value) {
         oppdaterGebyr();
     }
@@ -39,49 +37,43 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('image_preview_container').style.display = 'block';
     }
     
-    // Kjør en sjekk på datoer med en gang for å oppdatere listen
     checkDates(); 
     attachAutosave();
 });
 
-// --- HJELPEFUNKSJONER FOR DATO ---
-
-// NY: Beregner Stortingets åpning (Første hverdag i oktober)
+// --- DATO-LOGIKK FOR STORTINGET ---
 function setStortingetDate() {
     const fraInput = document.getElementById('in_fra');
-    // Bruk årstallet fra "Fra dato" hvis satt, ellers i år
+    // Bruk årstall fra "Fra dato" hvis valgt, ellers inneværende år
     const year = fraInput.value ? new Date(fraInput.value).getFullYear() : new Date().getFullYear();
     
-    // 1. oktober (Måned er 0-indeksert, så 9 er oktober)
-    let d = new Date(year, 9, 1);
-    
-    // Hvis 1. oktober er en søndag (0), flytt til mandag 2. oktober
-    if (d.getDay() === 0) {
-        d.setDate(2);
+    // 1. oktober
+    let d = new Date(year, 9, 1); 
+    const dayOfWeek = d.getDay(); // 0=Søn, 6=Lør
+
+    // Stortinget trer sammen første hverdag i oktober.
+    if (dayOfWeek === 6) {
+        d.setDate(3); // Lørdag -> Mandag (pluss 2 dager)
+    } else if (dayOfWeek === 0) {
+        d.setDate(2); // Søndag -> Mandag (pluss 1 dag)
     }
-    // (Grunnloven sier "første hverdag". Lørdag regnes ofte som hverdag i denne sammenheng, 
-    // men hvis du vil unngå lørdag også, kan du legge til sjekk for getDay() === 6)
 
     const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0'); // +1 fordi getMonth er 0-11
+    const month = String(d.getMonth() + 1).padStart(2, '0');
     const dateStr = `${year}-${month}-${day}`;
 
-    // Sett verdien kun hvis den ikke allerede er satt manuelt (håndteres av loadState, men greit default)
     const field = document.getElementById('in_stortinget_dato');
+    // Sett kun hvis feltet er tomt (ikke overskriv hvis brukeren har endret det manuelt før reload)
     if (!field.value) {
         field.value = dateStr;
     }
 }
 
-// --- DATO SJEKK (Flyforbud) ---
+// --- SJEKK DATOER MOT PERIODE ---
 function checkDates() {
     const fra = document.getElementById('in_fra').valueAsDate;
     const til = document.getElementById('in_til').valueAsDate;
     
-    // Hvis "Fra dato" endres, oppdater gjerne Stortinget-året automatisk hvis feltet ikke er manuelt overstyrt nylig?
-    // For enkelhets skyld kaller vi setStortingetDate() her hvis man bytter år, men vi må passe på å ikke overskrive brukerens valg.
-    // Vi lar feltet stå som det er, brukeren ser det tydelig.
-
     if (!fra || !til) return;
 
     // 1. Sjekk faste datoer (17. mai etc)
@@ -91,9 +83,7 @@ function checkDates() {
         let endYear = til.getFullYear();
 
         for (let y = startYear; y <= endYear; y++) {
-            let dateObj;
             if (std.date === "12-31") { 
-                 // Sjekk nyttårsaften og 1. nyttårsdag
                  let d1 = new Date(y, 11, 31);
                  let d2 = new Date(y+1, 0, 1);
                  if ((d1 >= fra && d1 <= til) || (d2 >= fra && d2 <= til)) hit = true;
@@ -104,19 +94,16 @@ function checkDates() {
             }
         }
 
-        // Legg til hvis treff og ikke finnes fra før
         if (hit && !activeNoFlyDates.some(x => x.label === std.label)) {
             activeNoFlyDates.push({ label: std.label, auto: true });
         }
     });
 
-    // 2. NY: Sjekk Stortingets åpningsdato (fra input-feltet)
+    // 2. Sjekk Stortingets åpning (fra konfigurasjonsfeltet)
     const stortingInput = document.getElementById('in_stortinget_dato');
     if (stortingInput.value) {
         const stortingDate = new Date(stortingInput.value);
-        // Sjekk om datoen er innenfor intervallet
         if (stortingDate >= fra && stortingDate <= til) {
-            // Formater dato for visning (DD.MM)
             const day = String(stortingDate.getDate()).padStart(2, '0');
             const month = String(stortingDate.getMonth() + 1).padStart(2, '0');
             const label = `${day}.${month} (Stortingets åpning)`;
@@ -152,13 +139,12 @@ function renderNoFlyList() {
     ul.innerHTML = '';
     activeNoFlyDates.forEach((item, index) => {
         const li = document.createElement('li');
-        // Vis slette-kryss på alle
         li.innerHTML = `${item.label} <span class="tag-remove" onclick="removeNoFly(${index})">&times;</span>`;
         ul.appendChild(li);
     });
 }
 
-// --- PRIVATPERSON LOGIKK ---
+// --- PRIVATPERSON ---
 function togglePrivat(save = true) {
     const isPrivat = document.getElementById('check_privat').checked;
     const orgDiv = document.getElementById('div_orgNr');
@@ -179,7 +165,7 @@ function validateForm() {
     const requiredInputs = document.querySelectorAll('.required');
     
     requiredInputs.forEach(el => {
-        // Sjekk om elementet er synlig (vi validerer ikke skjulte felt, f.eks orgnr hvis privat)
+        // Validerer kun synlige felt (ignorerer skjult orgnr)
         if (el.offsetParent !== null) { 
             if (!el.value.trim()) {
                 el.classList.add('input-error');
@@ -199,7 +185,7 @@ function validateForm() {
     return isValid;
 }
 
-// --- STANDARD LOGIKK (RESTEN) ---
+// --- GENERELT ---
 function oppdaterGebyr() {
     const isExtension = document.getElementById('type_forlengelse').checked;
     document.getElementById('in_gebyr_sats').value = isExtension ? GEBYR_SATS_FORLENGELSE : GEBYR_SATS_NY;
@@ -221,8 +207,6 @@ function byttSpraak(resetTexts = true) {
         rawBakgrunn = rawBakgrunn.replace(", organisasjonsnummer: {ORGNR}", "").replace(", trade register No: {ORGNR}", "");
     }
 
-    const m = getFormData(); // Hjelpefunksjon for å hente data til replace
-
     const fillTexts = () => {
         document.getElementById('txt_edit_bakgrunn').value = rawBakgrunn.replace('{TYPE}', typeTxt);
         document.getElementById('txt_edit_vurdering').value = t.vurdering;
@@ -242,7 +226,6 @@ function byttSpraak(resetTexts = true) {
     saveState();
 }
 
-// --- PILOTER & DRONER ---
 function addPilot(navn = '') {
     const id = Date.now(); pilots.push({ id, navn }); renderPilots(); saveState();
 }
@@ -273,7 +256,6 @@ function renderDrones() {
 }
 function updateDrone(id, field, value) { const d = drones.find(x => x.id === id); if (d) { d[field] = value; saveState(); } }
 
-// --- KART & AUTOSAVE ---
 function previewImage() {
     const file = document.getElementById('in_kart_bilde').files[0];
     if (file) { const reader = new FileReader(); reader.onloadend = function() { mapImageBase64 = reader.result; document.getElementById('img_preview').src = mapImageBase64; document.getElementById('image_preview_container').style.display = 'block'; saveState(); }; reader.readAsDataURL(file); }
@@ -311,7 +293,6 @@ function loadState() {
     }
     if (data.drones) { drones = data.drones; renderDrones(); }
     if (data.pilots) { pilots = data.pilots; renderPilots(); }
-    // Last inn nofly (men sjekk datoer på nytt etterpå for å fange opp Stortinget-endringer hvis årstallet er byttet)
     if (data.nofly) { activeNoFlyDates = data.nofly; }
     if (data.map) { mapImageBase64 = data.map; }
 }
@@ -321,7 +302,7 @@ function attachAutosave() {
     inputs.forEach(el => { if (el.type !== 'file') { el.addEventListener('input', saveState); el.addEventListener('change', saveState); } });
 }
 
-// --- UTSKRIFT HJELPERE ---
+// --- UTSKRIFT ---
 function getFormData() {
     return {
         mottaker: document.getElementById('in_mottaker').value || "[MOTTAKER]",
@@ -367,7 +348,6 @@ function printDoc() {
     }
     const regelsettStr = regelsettArr.join(", ");
 
-    // Fyll ut labels og faste felt
     for (const [key, label] of Object.entries(t.labels)) {
         if (typeof label === 'string') {
             const el = document.getElementById('lbl_' + key);
@@ -379,7 +359,6 @@ function printDoc() {
         }
     }
     
-    // Fyll data-felter
     const mapFields = {
         'out_saksbehandler': m.saksbehandler, 'out_saksbehandler_sign': m.saksbehandler,
         'out_dato': m.dato, 'out_ref': m.ref, 'out_deresDato': m.deresDato,
@@ -398,7 +377,6 @@ function printDoc() {
     const imgOut = document.getElementById('out_kart_bilde');
     if (mapImageBase64) { imgOut.src = mapImageBase64; imgOut.style.display = 'block'; } else { imgOut.style.display = 'none'; }
 
-    // Tekster
     let bakgrunn = document.getElementById('txt_edit_bakgrunn').value;
     if (isPrivat) bakgrunn = bakgrunn.replace("{MOTTAKER}", m.mottaker).replace("{OPNR}", m.opNr);
     else bakgrunn = bakgrunn.replace("{MOTTAKER}", m.mottaker).replace("{OPNR}", m.opNr).replace("{ORGNR}", m.orgNr);
@@ -415,7 +393,6 @@ function printDoc() {
     document.getElementById('out_txt_klage').innerText = t.klage;
     document.getElementById('out_txt_kopi').innerText = t.kopi;
 
-    // Vilkår med forbudsdager
     const ul = document.getElementById('list_vilkar'); ul.innerHTML = "";
     let noFlyStr = activeNoFlyDates.length > 0 ? activeNoFlyDates.map(d => " - " + d.label).join("\n") : " (Ingen spesielle datoer registrert)";
     t.vilkar.forEach(punkt => {
@@ -423,7 +400,6 @@ function printDoc() {
         let li = document.createElement('li'); li.innerText = tekst; li.style.whiteSpace = "pre-line"; ul.appendChild(li);
     });
 
-    // Tabell Droner
     const tbody = document.getElementById('tbody_droner'); tbody.innerHTML = "";
     drones.forEach(d => {
         let tr = document.createElement('tr'); tr.innerHTML = `<td>${d.modell}</td><td>${d.vekt} ${d.unit}</td><td>${d.sn}</td>`;

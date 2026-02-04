@@ -244,10 +244,18 @@
 
     <div class="paper-doc">
         <div class="page-1-wrapper">
-            <div class="doc-header">
-                <div class="header-left">
-                     <img src="logo.png" alt="Luftfartstilsynet Logo" class="logo-img">
+            
+            <div class="pdf-logo-container">
+                 <img src="logo.png" alt="Luftfartstilsynet Logo" class="logo-img">
+            </div>
+
+            <div class="doc-columns">
+                <div class="address-block uppercase">
+                    <div id="out_mottaker"></div>
+                    <div id="out_adresse"></div>
+                    <div id="out_poststed"></div>
                 </div>
+
                 <div class="doc-meta">
                     <table>
                         <tr><td class="bold" id="lbl_saksbehandler">Saksbehandler:</td><td id="out_saksbehandler"></td></tr>
@@ -258,12 +266,6 @@
                         <tr><td class="bold" id="lbl_deres_dato">Deres dato:</td><td id="out_deresDato"></td></tr>
                     </table>
                 </div>
-            </div>
-
-            <div class="address-block uppercase">
-                <div id="out_mottaker"></div>
-                <div id="out_adresse"></div>
-                <div id="out_poststed"></div>
             </div>
 
             <h1 class="doc-title">

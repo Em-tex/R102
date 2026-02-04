@@ -106,7 +106,7 @@ button:hover { background: #004494; }
    ------------------------------------------- */
 @media print {
     @page { 
-        margin: 0; /* Nullstiller marger for å fjerne browser header/footer */
+        margin: 0; 
         size: A4; 
     }
     
@@ -125,30 +125,54 @@ button:hover { background: #004494; }
     /* SIDE 1 WRAPPER */
     .page-1-wrapper {
         position: relative;
-        height: 297mm; /* Full A4 */
+        height: 297mm; 
         width: 100%;
-        padding: 20mm 20mm 0 20mm; /* Top Right Bottom Left */
+        padding: 20mm 20mm 0 20mm;
         box-sizing: border-box;
         page-break-after: always;
-        overflow: hidden; /* Sikrer at ingenting flyter ut */
+        overflow: hidden; 
     }
 
-    /* HEADER / LOGO */
-    .doc-header { 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: flex-start;
+    /* HEADER LAYOUT: Logo top, then columns */
+    .pdf-logo-container {
         margin-bottom: 40px; 
     }
-    /* Større logo, venstrejustert */
-    .logo-img { height: 75px; width: auto; display: block; } 
     
+    /* Større logo */
+    .logo-img { 
+        height: 100px; /* Økt størrelse */
+        width: auto; 
+        display: block; 
+    } 
+
+    /* Flex container for Adresse (venstre) og Meta (høyre) */
+    .doc-columns {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start; /* Toppjustering */
+        margin-bottom: 40px;
+        width: 100%;
+    }
+
+    /* Venstre kolonne */
+    .address-block { 
+        font-size: 11pt; 
+        line-height: 1.5; 
+        width: 50%;
+        margin-top: 0; /* Sikrer toppjustering */
+    }
+    .uppercase { text-transform: uppercase; }
+
+    /* Høyre kolonne */
+    .doc-meta { 
+        width: 45%; 
+        display: flex;
+        justify-content: flex-end; /* Skyver innhold til høyre */
+        margin-top: 0; /* Sikrer toppjustering */
+    }
     .doc-meta table { font-size: 10pt; }
     .doc-meta td { padding-left: 10px; vertical-align: top; }
     .doc-meta .bold { font-weight: bold; width: 100px; }
-
-    .address-block { margin-left: 5px; margin-bottom: 40px; font-size: 11pt; line-height: 1.5; }
-    .uppercase { text-transform: uppercase; }
 
     .doc-title { font-size: 16pt; margin-bottom: 20px; margin-top: 0; }
 
@@ -158,26 +182,21 @@ button:hover { background: #004494; }
     /* TABELL */
     .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10.5pt; page-break-inside: avoid; }
     .data-table th, .data-table td { border: 1px solid #000; padding: 5px 8px; text-align: left; vertical-align: top; }
-    /* Første kolonne bredde 30%, grå bakgrunn på TH */
     .data-table th { background-color: #f0f0f0; width: 30%; font-weight: bold; -webkit-print-color-adjust: exact; }
     
-    /* Kontaktinfo sub-labels i venstre kolonne, men ikke bold */
-    .sub-label { 
-        width: 30%; /* Samme bredde som TH */
-        font-weight: normal; 
-    }
+    .sub-label { width: 30%; font-weight: normal; }
 
-    /* LYSEBLÅ FOOTER SIDE 1 - UTEN HVIT GLIPPE */
+    /* LYSEBLÅ FOOTER SIDE 1 */
     .page-1-footer {
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
         height: 35mm;
-        background-color: #e6f7ff; /* Lyseblå */
+        background-color: #e6f7ff; 
         display: flex;
         justify-content: space-between;
-        padding: 15px 20mm; /* Matcher side-margen */
+        padding: 15px 20mm; 
         box-sizing: border-box;
         font-size: 9pt;
         color: #333;

@@ -20,7 +20,6 @@ const teksterData = {
             hilsen: "Med vennlig hilsen", avdeling: "ubemannet luftfart", stilling: "flyoperativ inspektør",
             elektronisk: "Dokumentet er elektronisk godkjent og krever ikke signatur",
             dok_tittel: "Dispensasjon",
-            // Oppdatert tabell-labels for å matche nytt format
             tabell: { regelsett: "Regelsett", kontakt: "Kontaktinformasjon", oppdrag: "Oppdragsgiver", art: "Oppdragets art", tid: "Tidsrom", sted: "Operasjonsområde", piloter: "Piloter" },
             header: { bakgrunn: "Bakgrunn", regelverk: "Regelverk", vurdering: "Vurdering", vedtak: "Vedtak", vilkar: "Vilkår", droner: "Droner", info: "Til informasjon", klage: "Klageadgang" }
         },

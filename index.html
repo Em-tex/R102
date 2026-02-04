@@ -37,12 +37,18 @@
                     <label>Operatørnummer</label>
                     <div class="icon-input">
                         <i class="fa-solid fa-id-card"></i>
-                        <input type="text" id="in_opNr" placeholder="NOR...">
+                        <input type="text" id="in_opNr" class="required" placeholder="NOR...">
                     </div>
                 </div>
+                
                 <div class="input-group">
-                    <label>Organisasjonsnummer</label>
-                    <div class="icon-input">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label>Organisasjonsnummer</label>
+                        <label style="font-weight: normal; font-size: 0.85em; cursor: pointer;">
+                            <input type="checkbox" id="check_privat" onchange="togglePrivat()"> Privatperson
+                        </label>
+                    </div>
+                    <div class="icon-input" id="div_orgNr">
                         <i class="fa-solid fa-building"></i>
                         <input type="text" id="in_orgNr" placeholder="999 999 999">
                     </div>
@@ -54,21 +60,21 @@
                     <label>Søker (Firma/Navn)</label>
                     <div class="icon-input">
                         <i class="fa-solid fa-user"></i>
-                        <input type="text" id="in_mottaker" placeholder="Navn på søker">
+                        <input type="text" id="in_mottaker" class="required" placeholder="Navn på søker">
                     </div>
                 </div>
                 <div class="input-group">
                     <label>Adresse</label>
                     <div class="icon-input">
                         <i class="fa-solid fa-location-dot"></i>
-                        <input type="text" id="in_adresse" placeholder="Gateadresse">
+                        <input type="text" id="in_adresse" class="required" placeholder="Gateadresse">
                     </div>
                 </div>
                 <div class="input-group">
                     <label>Poststed</label>
                     <div class="icon-input">
                         <i class="fa-solid fa-city"></i>
-                        <input type="text" id="in_poststed" placeholder="Postnr og Sted">
+                        <input type="text" id="in_poststed" class="required" placeholder="Postnr og Sted">
                     </div>
                 </div>
             </div>
@@ -76,15 +82,15 @@
             <div class="grid" style="margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 15px;">
                 <div class="input-group">
                     <label>Kontaktperson Navn</label>
-                    <div class="icon-input"><i class="fa-solid fa-user-tag"></i><input type="text" id="in_kontakt_navn"></div>
+                    <div class="icon-input"><i class="fa-solid fa-user-tag"></i><input type="text" id="in_kontakt_navn" class="required"></div>
                 </div>
                 <div class="input-group">
                     <label>Kontakt Telefon</label>
-                    <div class="icon-input"><i class="fa-solid fa-phone"></i><input type="text" id="in_kontakt_tlf"></div>
+                    <div class="icon-input"><i class="fa-solid fa-phone"></i><input type="text" id="in_kontakt_tlf" class="required"></div>
                 </div>
                 <div class="input-group">
                     <label>Kontakt E-post</label>
-                    <div class="icon-input"><i class="fa-solid fa-envelope"></i><input type="text" id="in_kontakt_epost"></div>
+                    <div class="icon-input"><i class="fa-solid fa-envelope"></i><input type="text" id="in_kontakt_epost" class="required"></div>
                 </div>
             </div>
 
@@ -95,19 +101,19 @@
                     <label>Saksbehandler</label>
                     <div class="icon-input">
                         <i class="fa-solid fa-user-tie"></i>
-                        <input type="text" id="in_saksbehandler" value="Martin Rugsveen">
+                        <input type="text" id="in_saksbehandler" class="required" placeholder="Ditt navn">
                     </div>
                 </div>
                 <div class="input-group">
                     <label>Vår Ref (P360)</label>
                     <div class="icon-input">
                         <i class="fa-solid fa-folder-open"></i>
-                        <input type="text" id="in_ref" placeholder="26/xxxxx-...">
+                        <input type="text" id="in_ref" class="required" placeholder="26/xxxxx-...">
                     </div>
                 </div>
                 <div class="input-group">
                     <label>Vår Dato</label>
-                    <input type="date" id="in_dato">
+                    <input type="date" id="in_dato" class="required">
                 </div>
             </div>
             <div class="grid">
@@ -134,27 +140,37 @@
             <div class="grid">
                 <div class="input-group">
                     <label>Oppdragsgiver</label>
-                    <input type="text" id="in_oppdrag">
+                    <input type="text" id="in_oppdrag" class="required">
                 </div>
                 <div class="input-group">
                     <label>Art (Formål)</label>
-                    <input type="text" id="in_art" placeholder="F.eks. Inspeksjon av tak">
+                    <input type="text" id="in_art" class="required" placeholder="F.eks. Inspeksjon av tak">
                 </div>
             </div>
 
             <div class="grid">
                 <div class="input-group">
                     <label>Fra dato</label>
-                    <input type="date" id="in_fra" onchange="checkDates()">
+                    <input type="date" id="in_fra" class="required" onchange="checkDates()">
                 </div>
                 <div class="input-group">
                     <label>Til dato</label>
-                    <input type="date" id="in_til" onchange="checkDates()">
+                    <input type="date" id="in_til" class="required" onchange="checkDates()">
                 </div>
             </div>
 
             <div class="full-width">
-                <label>Dager med flyforbud (Oppdateres automatisk basert på dato)</label>
+                <label>Dager med flyforbud</label>
+                
+                <div style="background: #f0f7ff; padding: 10px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #cce5ff;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label style="margin: 0; white-space: nowrap;">Stortingets åpning (dato):</label>
+                        <input type="date" id="in_stortinget_dato" onchange="checkDates()" style="width: auto; padding: 5px;">
+                        <small style="color: #666;">(Standard: første hverdag i oktober. Endre ved behov)</small>
+                    </div>
+                </div>
+
+                <label style="font-size: 0.9em; color: #666;">Aktive forbudsdager i perioden:</label>
                 <div class="no-fly-wrapper">
                     <ul id="no_fly_list" class="tag-list"></ul>
                     <div style="display: flex; gap: 5px; margin-top: 5px;">
@@ -168,7 +184,7 @@
                 <label>Område (Tekst)</label>
                 <div class="icon-input">
                     <i class="fa-solid fa-map"></i>
-                    <textarea id="in_omrade" rows="2" placeholder="Adresse/sted/kartutsnitt"></textarea>
+                    <textarea id="in_omrade" class="required" rows="2" placeholder="Adresse/sted/kartutsnitt"></textarea>
                 </div>
                 <label style="margin-top: 10px;">Last opp kartutsnitt (Bilde)</label>
                 <input type="file" id="in_kart_bilde" accept="image/*" onchange="previewImage()">
@@ -193,7 +209,6 @@
 
         <div class="input-card">
             <h2><i class="fa-solid fa-pen-to-square"></i> 4. Tilpasning av vedtak</h2>
-            
             <div class="grid">
                 <div class="input-group">
                     <label>Seksjonssjef Navn</label>
@@ -204,29 +219,17 @@
                     <input type="text" id="in_sjef_tittel" value="seksjonssjef">
                 </div>
             </div>
-
             <details>
                 <summary style="cursor: pointer; color: #0056b3; font-weight: bold; padding: 10px;">
                     <i class="fa-solid fa-edit"></i> Klikk for å redigere standardtekster (Lovhjemler, Gebyr m.m.)
                 </summary>
                 <div style="padding: 15px; background: #f9f9f9; border-radius: 5px;">
-                    <label>Bakgrunnstekst</label>
-                    <textarea id="txt_edit_bakgrunn" rows="3"></textarea>
-
-                    <label>Vurdering</label>
-                    <textarea id="txt_edit_vurdering" rows="6"></textarea>
-
-                    <label>Vedtakstekst</label>
-                    <textarea id="txt_edit_vedtak" rows="4"></textarea>
-
-                    <label>Gebyrtekst</label>
-                    <textarea id="txt_edit_gebyr" rows="4"></textarea>
-                    
+                    <label>Bakgrunnstekst</label><textarea id="txt_edit_bakgrunn" rows="3"></textarea>
+                    <label>Vurdering</label><textarea id="txt_edit_vurdering" rows="6"></textarea>
+                    <label>Vedtakstekst</label><textarea id="txt_edit_vedtak" rows="4"></textarea>
+                    <label>Gebyrtekst</label><textarea id="txt_edit_gebyr" rows="4"></textarea>
                     <div class="grid">
-                        <div>
-                            <label>Gebyrsats (NOK)</label>
-                            <input type="text" id="in_gebyr_sats">
-                        </div>
+                        <div><label>Gebyrsats (NOK)</label><input type="text" id="in_gebyr_sats"></div>
                     </div>
                 </div>
             </details>
@@ -239,13 +242,15 @@
     </div>
 
     <div class="paper-doc">
-        
         <div class="page-1-wrapper">
-            
             <div class="doc-header">
-                <img src="logo.png" alt="Luftfartstilsynet Logo" class="logo-img">
-                
+                <div class="header-left">
+                     <img src="logo.png" alt="Luftfartstilsynet Logo" class="logo-img">
+                </div>
                 <div class="doc-meta">
+                     <div id="out_mottaker_meta" style="font-weight: bold; margin-bottom: 5px; display:none;"></div>
+                     <div id="out_adresse_meta" style="display:none;"></div>
+                     
                     <table>
                         <tr><td class="bold" id="lbl_saksbehandler">Saksbehandler:</td><td id="out_saksbehandler"></td></tr>
                         <tr><td class="bold" id="lbl_tlf">Telefon direkte:</td><td></td></tr>
@@ -272,10 +277,13 @@
                 <p id="out_txt_bakgrunn"></p> 
                 
                 <table class="data-table">
-                    <tr><th id="th_regelsett">Regelsett</th><td id="out_regelsett"></td></tr>
+                    <tr>
+                        <th id="th_regelsett">Regelsett</th>
+                        <td id="out_regelsett"></td>
+                    </tr>
                     
                     <tr>
-                        <th id="th_kontakt" rowspan="4" style="vertical-align: top;">Kontaktinformasjon</th>
+                        <th id="th_kontakt" colspan="2" style="background-color: #f0f0f0; font-weight: bold;">Kontaktinformasjon</th>
                     </tr>
                     <tr>
                         <td class="sub-label">Navn</td>
@@ -289,11 +297,12 @@
                         <td class="sub-label">E-post</td>
                         <td id="out_kontakt_epost"></td>
                     </tr>
-                    <tr><th id="th_oppdrag">Oppdragsgiver</th><td colspan="2" id="out_oppdrag"></td></tr>
-                    <tr><th id="th_art">Oppdragets art</th><td colspan="2" id="out_art"></td></tr>
-                    <tr><th id="th_tidsrom">Tidsrom</th><td colspan="2"><span id="lbl_fra">Fra</span> <span id="out_fra"></span> &nbsp; <span id="lbl_til">Til</span> <span id="out_til"></span></td></tr>
-                    <tr><th id="th_omrade">Operasjonsområde</th><td colspan="2"><span id="out_omrade"></span><br><img id="out_kart_bilde" src="" style="max-width: 100%; max-height: 300px; display: none; margin-top: 10px;"></td></tr>
-                    <tr><th id="th_piloter">Piloter</th><td colspan="2" id="out_piloter_liste"></td></tr>
+
+                    <tr><th id="th_oppdrag">Oppdragsgiver</th><td id="out_oppdrag"></td></tr>
+                    <tr><th id="th_art">Oppdragets art</th><td id="out_art"></td></tr>
+                    <tr><th id="th_tidsrom">Tidsrom</th><td><span id="lbl_fra">Fra</span> <span id="out_fra"></span> &nbsp; <span id="lbl_til">Til</span> <span id="out_til"></span></td></tr>
+                    <tr><th id="th_omrade">Operasjonsområde</th><td><span id="out_omrade"></span><br><img id="out_kart_bilde" src="" style="max-width: 100%; max-height: 250px; display: none; margin-top: 10px;"></td></tr>
+                    <tr><th id="th_piloter">Piloter</th><td id="out_piloter_liste"></td></tr>
                 </table>
             </div>
 
@@ -309,7 +318,9 @@
                     luftfartstilsynet.no
                 </div>
             </div>
-        </div> <div class="page-break-wrapper">
+        </div> 
+        
+        <div class="page-break-wrapper">
             <h3 id="h_regelverk" style="margin-top: 0;">Regelverk</h3>
             <p id="out_txt_regelverk"></p>
 

@@ -7,6 +7,12 @@ body {
     color: #333;
 }
 
+/* VALIDERING */
+.input-error {
+    border: 2px solid #d32f2f !important;
+    background-color: #fff8f8;
+}
+
 /* SKJERM-MODUS (Inputs) */
 .workspace {
     max-width: 1100px;
@@ -66,48 +72,19 @@ label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 6px; c
 .icon-input textarea { padding-top: 10px; }
 .icon-input i.fa-map { top: 20px; } 
 
-/* Layout: Checkboxer på samme linje */
-.inline-checkboxes {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-}
-
+.inline-checkboxes { display: flex; flex-direction: row; gap: 20px; }
 .checkbox-group label, .radio-group label {
     font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 5px;
 }
 
-/* Tag liste for Flyforbudsdager */
-.tag-list {
-    list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;
-}
-.tag-list li {
-    background: #e3f2fd; color: #0d47a1; padding: 5px 10px; border-radius: 15px; font-size: 13px;
-    display: flex; align-items: center; gap: 8px;
-}
-.tag-remove {
-    cursor: pointer; color: #c62828; font-weight: bold;
-}
-.tag-remove:hover { color: #b71c1c; }
+/* Tags og lister */
+.tag-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.tag-list li { background: #e3f2fd; color: #0d47a1; padding: 5px 10px; border-radius: 15px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+.tag-remove { cursor: pointer; color: #c62828; font-weight: bold; }
+.dynamic-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+.btn-remove { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+.btn-small { padding: 8px 15px; font-size: 13px; background: #e3f2fd; color: #0d47a1; }
 
-
-/* Dynamiske lister styling */
-.dynamic-row {
-    display: flex; gap: 10px; margin-bottom: 10px; align-items: center;
-}
-.btn-remove {
-    background: #ffebee; color: #c62828; border: 1px solid #ffcdd2;
-    width: 35px; height: 35px; border-radius: 50%; display: flex; 
-    align-items: center; justify-content: center; cursor: pointer; padding: 0;
-}
-.btn-remove:hover { background: #ef9a9a; }
-
-.btn-small {
-    padding: 8px 15px; font-size: 13px; background: #e3f2fd; color: #0d47a1;
-}
-.btn-small:hover { background: #bbdefb; }
-
-/* Action Bar */
 .action-bar {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
     background: white; padding: 10px 25px; border-radius: 50px;
@@ -121,18 +98,15 @@ button {
 }
 button:hover { background: #004494; }
 .btn-danger { background-color: #d32f2f !important; }
-.btn-danger:hover { background-color: #b71c1c !important; }
 
-/* DOKUMENT-MODUS (Skjult på skjerm) */
 .paper-doc { display: none; }
 
 /* -------------------------------------------
    PRINT-MODUS (PDF)
    ------------------------------------------- */
 @media print {
-    /* VIKTIG: Nullstiller marger for å fjerne browser header/footer */
     @page { 
-        margin: 0;
+        margin: 0; /* Nullstiller marger for å fjerne browser header/footer */
         size: A4; 
     }
     
@@ -148,43 +122,26 @@ button:hover { background: #004494; }
         font-family: 'Aptos', sans-serif;
     }
 
-    /* SIDE 1 WRAPPER: For å styre footer */
+    /* SIDE 1 WRAPPER */
     .page-1-wrapper {
         position: relative;
-        height: 296mm; /* Ca A4 høyde minus litt */
+        height: 297mm; /* Full A4 */
         width: 100%;
-        padding: 20mm 20mm 0 20mm;
+        padding: 20mm 20mm 0 20mm; /* Top Right Bottom Left */
         box-sizing: border-box;
         page-break-after: always;
+        overflow: hidden; /* Sikrer at ingenting flyter ut */
     }
 
-    /* LYSEBLÅ FOOTER SIDE 1 */
-    .page-1-footer {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 35mm;
-        background-color: #e6f7ff; /* Lyseblå farge */
-        display: flex;
-        justify-content: space-between;
-        padding: 15px 20mm;
-        box-sizing: border-box;
-        font-size: 9pt;
-        color: #333;
-        -webkit-print-color-adjust: exact; /* Tvinger fargeutskrift */
-        print-color-adjust: exact;
-    }
-    .p1-footer-right { text-align: right; }
-
-    /* Logo header setup */
+    /* HEADER / LOGO */
     .doc-header { 
         display: flex; 
         justify-content: space-between; 
+        align-items: flex-start;
         margin-bottom: 40px; 
     }
-    
-    .logo-img { height: 50px; width: auto; }
+    /* Større logo, venstrejustert */
+    .logo-img { height: 75px; width: auto; display: block; } 
     
     .doc-meta table { font-size: 10pt; }
     .doc-meta td { padding-left: 10px; vertical-align: top; }
@@ -198,19 +155,43 @@ button:hover { background: #004494; }
     h3 { font-size: 11pt; margin-bottom: 5px; margin-top: 15px; page-break-after: avoid; }
     p { margin-top: 0; margin-bottom: 10px; text-align: justify; }
 
-    /* Tabeller */
+    /* TABELL */
     .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10.5pt; page-break-inside: avoid; }
     .data-table th, .data-table td { border: 1px solid #000; padding: 5px 8px; text-align: left; vertical-align: top; }
-    .data-table th { background-color: #f0f0f0; width: 30%; -webkit-print-color-adjust: exact; font-weight: bold; }
+    /* Første kolonne bredde 30%, grå bakgrunn på TH */
+    .data-table th { background-color: #f0f0f0; width: 30%; font-weight: bold; -webkit-print-color-adjust: exact; }
     
-    /* Kontaktinfo tabellfix */
-    .sub-label { font-weight: normal; font-style: italic; width: 20%; border-right: none; }
+    /* Kontaktinfo sub-labels i venstre kolonne, men ikke bold */
+    .sub-label { 
+        width: 30%; /* Samme bredde som TH */
+        font-weight: normal; 
+    }
+
+    /* LYSEBLÅ FOOTER SIDE 1 - UTEN HVIT GLIPPE */
+    .page-1-footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 35mm;
+        background-color: #e6f7ff; /* Lyseblå */
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 20mm; /* Matcher side-margen */
+        box-sizing: border-box;
+        font-size: 9pt;
+        color: #333;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        z-index: 10;
+    }
+    .p1-footer-right { text-align: right; }
 
     /* Lister */
     ul { margin-top: 0; padding-left: 20px; }
     li { margin-bottom: 4px; }
 
-    /* Side 2 container */
+    /* SIDE 2 CONTAINER */
     .page-break-wrapper {
         padding: 20mm 20mm 20mm 20mm;
         margin: 0;
